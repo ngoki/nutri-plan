@@ -1,0 +1,1971 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mein Ernährungsplan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  /* ── Reset & Base ── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --cream:   #F7F3EC;
+    --sand:    #E8E0D0;
+    --olive:   #5C6B3A;
+    --olive-lt:#8A9E5A;
+    --olive-dk:#3A4422;
+    --terr:    #B5714A;
+    --terr-lt: #D4906A;
+    --ink:     #1E1E1A;
+    --ink-mid: #4A4A42;
+    --ink-muted:#8A8A7E;
+    --white:   #FFFFFF;
+    --radius:  12px;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    background: var(--cream);
+    color: var(--ink);
+    min-height: 100vh;
+    line-height: 1.7;
+  }
+
+  /* ── LOGIN SCREEN ── */
+  #login-screen {
+    position: fixed; inset: 0;
+    background: var(--olive-dk);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 1000;
+    animation: fadeIn 0.4s ease;
+  }
+
+  .login-card {
+    background: var(--cream);
+    border-radius: 20px;
+    padding: 3rem 2.5rem;
+    width: min(420px, 90vw);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .login-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--olive), var(--terr));
+  }
+
+  .login-icon {
+    width: 56px; height: 56px;
+    background: var(--sand);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 1.5rem;
+    font-size: 24px;
+  }
+
+  .login-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    font-weight: 400;
+    color: var(--olive-dk);
+    margin-bottom: 0.4rem;
+  }
+
+  .login-sub {
+    font-size: 0.85rem;
+    color: var(--ink-muted);
+    margin-bottom: 2rem;
+  }
+
+  .login-label {
+    display: block;
+    text-align: left;
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-mid);
+    margin-bottom: 0.5rem;
+  }
+
+  .login-input {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    border: 1.5px solid var(--sand);
+    border-radius: var(--radius);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1rem;
+    font-weight: 400;
+    background: var(--white);
+    color: var(--ink);
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    margin-bottom: 1.25rem;
+    letter-spacing: 0.12em;
+  }
+
+  .login-input:focus {
+    border-color: var(--olive);
+    box-shadow: 0 0 0 3px rgba(92,107,58,0.12);
+  }
+
+  .login-input.error {
+    border-color: var(--terr);
+    box-shadow: 0 0 0 3px rgba(181,113,74,0.15);
+    animation: shake 0.35s ease;
+  }
+
+  .login-btn {
+    width: 100%;
+    padding: 0.85rem;
+    background: var(--olive);
+    color: var(--white);
+    border: none;
+    border-radius: var(--radius);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    letter-spacing: 0.04em;
+    transition: background 0.2s, transform 0.1s;
+  }
+
+  .login-btn:hover { background: var(--olive-dk); }
+  .login-btn:active { transform: scale(0.98); }
+
+  .login-error {
+    font-size: 0.8rem;
+    color: var(--terr);
+    margin-top: 0.75rem;
+    min-height: 1.2rem;
+    font-weight: 400;
+  }
+
+  /* ── MAIN CONTENT ── */
+  #main-content { display: none; }
+
+  /* Header */
+  .site-header {
+    background: var(--olive-dk);
+    color: var(--white);
+    padding: 2.5rem 2rem 3rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .site-header::after {
+    content: '';
+    position: absolute;
+    bottom: -1px; left: 0; right: 0;
+    height: 40px;
+    background: var(--cream);
+    clip-path: ellipse(55% 100% at 50% 100%);
+  }
+
+  .header-inner {
+    max-width: 860px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+
+  .header-eyebrow {
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--olive-lt);
+    margin-bottom: 0.6rem;
+  }
+
+  .header-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.8rem, 5vw, 2.8rem);
+    font-weight: 400;
+    line-height: 1.2;
+    margin-bottom: 0.5rem;
+  }
+
+  .header-meta {
+    font-size: 0.82rem;
+    color: rgba(255,255,255,0.55);
+    margin-top: 0.4rem;
+  }
+
+  .logout-btn {
+    position: absolute; top: 0; right: 0;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    color: rgba(255,255,255,0.7);
+    padding: 0.45rem 1rem;
+    border-radius: 100px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.78rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .logout-btn:hover { background: rgba(255,255,255,0.2); color: var(--white); }
+
+  /* Main layout */
+  .page-main {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 4rem;
+  }
+
+  /* iCal Section */
+  .ical-section {
+    background: var(--white);
+    border: 1px solid var(--sand);
+    border-radius: 16px;
+    padding: 1.5rem 1.75rem;
+    margin-bottom: 2.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .ical-icon {
+    width: 48px; height: 48px;
+    background: var(--sand);
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+  }
+
+  .ical-text h3 {
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--ink);
+    margin-bottom: 0.2rem;
+  }
+
+  .ical-text p {
+    font-size: 0.8rem;
+    color: var(--ink-muted);
+  }
+
+  .ical-buttons {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-left: auto;
+  }
+
+  .ical-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0.55rem 1.1rem;
+    border-radius: 100px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 500;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.2s;
+    border: 1.5px solid;
+  }
+
+  .ical-btn-primary {
+    background: var(--olive);
+    border-color: var(--olive);
+    color: var(--white);
+  }
+  .ical-btn-primary:hover { background: var(--olive-dk); border-color: var(--olive-dk); }
+
+  .ical-btn-secondary {
+    background: transparent;
+    border-color: var(--sand);
+    color: var(--ink-mid);
+  }
+  .ical-btn-secondary:hover { border-color: var(--olive-lt); color: var(--olive-dk); }
+
+  /* Plan content area */
+  .plan-label {
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .plan-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--sand);
+  }
+
+  /* ── PLAN CONTENT PLACEHOLDER ── */
+  .plan-content {
+    background: var(--white);
+    border: 1px solid var(--sand);
+    border-radius: 16px;
+    padding: 2rem 2rem;
+    animation: fadeUp 0.5s ease 0.1s both;
+  }
+
+  /* Styles for injected Cowork HTML content */
+  .plan-content h1, .plan-content h2, .plan-content h3 {
+    font-family: 'Playfair Display', serif;
+    font-weight: 400;
+    color: var(--olive-dk);
+    margin-top: 1.5rem;
+    margin-bottom: 0.6rem;
+    line-height: 1.3;
+  }
+  .plan-content h1 { font-size: 1.6rem; margin-top: 0; }
+  .plan-content h2 { font-size: 1.25rem; border-bottom: 1px solid var(--sand); padding-bottom: 0.4rem; }
+  .plan-content h3 { font-size: 1.05rem; }
+
+  .plan-content p { margin-bottom: 0.8rem; color: var(--ink-mid); font-size: 0.95rem; }
+
+  .plan-content table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.88rem;
+    margin: 1rem 0 1.5rem;
+  }
+  .plan-content th {
+    background: var(--sand);
+    color: var(--olive-dk);
+    font-weight: 500;
+    text-align: left;
+    padding: 0.6rem 0.9rem;
+    font-size: 0.8rem;
+    letter-spacing: 0.04em;
+  }
+  .plan-content td {
+    padding: 0.55rem 0.9rem;
+    border-bottom: 1px solid var(--sand);
+    color: var(--ink-mid);
+    vertical-align: top;
+  }
+  .plan-content tr:last-child td { border-bottom: none; }
+  .plan-content tr:hover td { background: rgba(232,224,208,0.3); }
+
+  .plan-content ul, .plan-content ol {
+    padding-left: 1.4rem;
+    margin-bottom: 1rem;
+    color: var(--ink-mid);
+    font-size: 0.92rem;
+  }
+  .plan-content li { margin-bottom: 0.3rem; }
+
+  .plan-content strong { font-weight: 500; color: var(--ink); }
+
+  .plan-content .tag {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 100px;
+    font-size: 0.75rem;
+    background: var(--sand);
+    color: var(--olive-dk);
+    margin: 2px;
+  }
+
+  /* Demo placeholder (remove when inserting real content) */
+  .demo-notice {
+    background: rgba(92,107,58,0.08);
+    border: 1.5px dashed var(--olive-lt);
+    border-radius: var(--radius);
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 2rem;
+    font-size: 0.85rem;
+    color: var(--olive-dk);
+  }
+  .demo-notice strong { font-weight: 500; }
+
+  /* Sample plan table for demo */
+  .week-tag {
+    display: inline-block;
+    background: var(--olive);
+    color: var(--white);
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    padding: 3px 12px;
+    border-radius: 100px;
+    margin-bottom: 1rem;
+  }
+
+  /* Footer */
+  .site-footer {
+    text-align: center;
+    font-size: 0.75rem;
+    color: var(--ink-muted);
+    padding: 2rem;
+    border-top: 1px solid var(--sand);
+    margin-top: 2rem;
+  }
+
+  /* Animations */
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(-6px); }
+    60% { transform: translateX(6px); }
+    80% { transform: translateX(-3px); }
+  }
+
+  /* Responsive */
+  @media (max-width: 600px) {
+    .ical-section { flex-direction: column; align-items: flex-start; }
+    .ical-buttons { margin-left: 0; }
+    .plan-content { padding: 1.25rem; }
+    .plan-content table { font-size: 0.8rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════
+     LOGIN SCREEN
+════════════════════════════════════════ -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-icon">🥦</div>
+    <h1 class="login-title">Ernährungsplan</h1>
+    <p class="login-sub">Bitte gib das Passwort ein, um fortzufahren.</p>
+
+    <label class="login-label" for="pw-input">Passwort</label>
+    <input
+      type="password"
+      id="pw-input"
+      class="login-input"
+      placeholder="••••••••"
+      autocomplete="current-password"
+      autofocus
+    />
+
+    <button class="login-btn" onclick="checkPassword()">Zugang öffnen</button>
+    <p class="login-error" id="pw-error"></p>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     MAIN CONTENT
+════════════════════════════════════════ -->
+<div id="main-content">
+
+  <!-- Header -->
+  <header class="site-header">
+    <div class="header-inner">
+      <button class="logout-btn" onclick="logout()">Abmelden</button>
+      <p class="header-eyebrow">Persönlicher Ernährungsplan</p>
+      <h1 class="header-title">Mein Wochenplan</h1>
+      <p class="header-meta">Erstellt mit Claude Cowork · Zuletzt aktualisiert: März 2025</p>
+    </div>
+  </header>
+
+  <main class="page-main">
+
+    <!-- iCal Subscription -->
+    <div class="ical-section">
+      <div class="ical-icon">📅</div>
+      <div class="ical-text">
+        <h3>Kalender abonnieren</h3>
+        <p>Mahlzeiten direkt in deinen Kalender importieren</p>
+      </div>
+      <div class="ical-buttons">
+        <!-- 🔧 ERSETZE DIE HREFS MIT DEINEN iCAL-LINKS AUS COWORK -->
+        <a class="ical-btn ical-btn-primary" href="webcal://ernaehrung_abendkueche_${who.toLowerCase()}.ics">
+          ＋ Apple Kalender
+        </a>
+        <a class="ical-btn ical-btn-secondary" href="https://ernaehrung_abendkueche_${who.toLowerCase()}.ics">
+          ↓ .ics herunterladen
+        </a>
+        <a class="ical-btn ical-btn-secondary" href="https://www.google.com/calendar/render?cid=DEIN-ICAL-LINK-HIER">
+          Google Kalender
+        </a>
+      </div>
+    </div>
+
+    <!-- Plan Content -->
+    <p class="plan-label">Ernährungsplan</p>
+
+    <div class="plan-content">
+
+      <!-- ══════════════════════════════════════════════════
+           🔧 DEMO-INHALT — ERSETZE DIESEN BLOCK MIT DEINEM
+              HTML-EXPORT AUS CLAUDE COWORK
+      ══════════════════════════════════════════════════ -->
+
+    <!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gemeinsame Abendküche · K & A</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#0f1117; --bg2:#181c27; --bg3:#1f2438;
+  --surface:#252b3b; --surface2:#2e3548;
+  --border:rgba(255,255,255,0.08); --border2:rgba(255,255,255,0.14);
+  --text:#eef0f6; --text2:#8b92a8; --text3:#5a6178;
+  --K:#34d399; --Kdim:rgba(52,211,153,0.12);
+  --A:#60a5fa; --Adim:rgba(96,165,250,0.12);
+  --amber:#fbbf24; --amberdim:rgba(251,191,36,0.12);
+  --coral:#f87171; --coraldim:rgba(248,113,113,0.12);
+  --purple:#a78bfa; --purpledim:rgba(167,139,250,0.12);
+  --shared:#c084fc; --shareddim:rgba(192,132,252,0.12);
+  --r:14px; --rs:8px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Barlow',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
+
+/* HEADER */
+.hdr{background:var(--bg2);border-bottom:1px solid var(--border);padding:0 24px;height:64px;
+  display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;}
+.hdr-logo{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:22px;display:flex;align-items:center;gap:10px;}
+.hdr-logo .k{color:var(--K);} .hdr-logo .a{color:var(--A);}
+.hdr-logo .sep{color:var(--text3);font-weight:400;}
+.hdr-logo .sub{font-size:11px;font-weight:400;color:var(--text3);letter-spacing:1px;text-transform:uppercase;}
+.nav-tabs{display:flex;gap:4px;}
+.nav-tab{padding:8px 16px;border-radius:var(--rs);font-size:14px;font-weight:500;cursor:pointer;
+  color:var(--text2);border:none;background:none;transition:all .2s;font-family:'Barlow',sans-serif;}
+.nav-tab:hover{color:var(--text);background:var(--surface);}
+.nav-tab.active{color:var(--text);background:var(--surface2);}
+
+/* HERO */
+.hero{padding:36px 24px 28px;max-width:1200px;margin:0 auto;}
+.hero-title{font-family:'Barlow Condensed',sans-serif;font-size:42px;font-weight:800;letter-spacing:1px;
+  background:linear-gradient(135deg,var(--K),var(--shared),var(--A));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:6px;}
+.hero-sub{font-size:15px;color:var(--text2);margin-bottom:24px;max-width:640px;line-height:1.6;}
+.athlete-cards{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:28px;}
+.acard{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);
+  padding:18px 22px;position:relative;overflow:hidden;transition:border-color .2s;}
+.acard::before{content:'';position:absolute;top:0;left:0;width:4px;height:100%;}
+.acard.k::before{background:var(--K);} .acard.a::before{background:var(--A);}
+.acard:hover{border-color:var(--border2);}
+.acard-head{display:flex;align-items:center;gap:14px;margin-bottom:10px;}
+.avatar{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-family:'Barlow Condensed',sans-serif;font-size:24px;font-weight:800;flex-shrink:0;}
+.acard.k .avatar{background:var(--Kdim);color:var(--K);}
+.acard.a .avatar{background:var(--Adim);color:var(--A);}
+.acard-name{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:700;}
+.acard.k .acard-name{color:var(--K);} .acard.a .acard-name{color:var(--A);}
+.acard-stats{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px;}
+.stat{background:var(--surface);padding:3px 10px;border-radius:20px;font-size:11px;color:var(--text2);font-weight:500;}
+.acard-goals{font-size:13px;color:var(--text2);line-height:1.5;margin-bottom:10px;}
+.train-days{display:flex;gap:6px;flex-wrap:wrap;}
+.daypill{background:var(--surface);border-radius:6px;padding:3px 9px;font-size:11px;font-weight:600;
+  color:var(--text3);text-transform:uppercase;letter-spacing:.3px;}
+.acard.k .daypill.act{background:var(--Kdim);color:var(--K);}
+.acard.a .daypill.act{background:var(--Adim);color:var(--A);}
+.daypill.spieltag{background:var(--coraldim);color:var(--coral);}
+
+/* KONZEPT BANNER */
+.konzept-banner{background:var(--bg2);border:1px solid var(--shared);border-radius:var(--r);
+  padding:20px 24px;margin-bottom:32px;display:flex;gap:20px;align-items:flex-start;}
+.konzept-icon{font-size:36px;flex-shrink:0;margin-top:2px;}
+.konzept-text h3{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;
+  color:var(--shared);margin-bottom:6px;}
+.konzept-text p{font-size:13px;color:var(--text2);line-height:1.6;}
+
+/* PAGE SECTIONS */
+.page{display:none;max-width:1200px;margin:0 auto;padding:0 24px 60px;}
+.page.active{display:block;}
+
+/* SECTION HEADER */
+.sec-hdr{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:20px;margin-top:4px;}
+.sec-title{font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:800;letter-spacing:.5px;}
+.sec-sub{font-size:13px;color:var(--text3);font-weight:500;}
+
+/* DAY CARDS */
+.days-list{display:flex;flex-direction:column;gap:16px;}
+.day-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;transition:border-color .2s;}
+.day-card:hover{border-color:var(--border2);}
+.day-header{display:grid;grid-template-columns:130px 1fr auto;align-items:center;gap:16px;padding:16px 20px;cursor:pointer;}
+.day-label{font-family:'Barlow Condensed',sans-serif;}
+.day-name{font-size:22px;font-weight:800;letter-spacing:.3px;}
+.day-context{font-size:12px;color:var(--text3);font-weight:500;margin-top:1px;text-transform:uppercase;letter-spacing:.3px;}
+.day-dish-preview{display:flex;align-items:center;gap:12px;}
+.dish-emoji-big{font-size:30px;}
+.dish-preview-name{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;color:var(--text);}
+.dish-preview-code{font-size:12px;color:var(--text3);margin-top:1px;}
+.shared-badge{background:var(--shareddim);border:1px solid rgba(192,132,252,0.3);color:var(--shared);
+  border-radius:20px;padding:4px 12px;font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;white-space:nowrap;}
+.day-expand-btn{font-size:12px;color:var(--text3);transition:transform .25s;flex-shrink:0;}
+.day-card.open .day-expand-btn{transform:rotate(180deg);}
+.day-body{display:none;padding:0 20px 20px;border-top:1px solid var(--border);}
+.day-card.open .day-body{display:block;}
+
+/* ATHLETE SPLIT */
+.athlete-split{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;}
+.split-box{border-radius:var(--rs);padding:14px 16px;}
+.split-box.k{background:var(--Kdim);border:1px solid rgba(52,211,153,0.2);}
+.split-box.a{background:var(--Adim);border:1px solid rgba(96,165,250,0.2);}
+.split-label{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;
+  text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;}
+.split-box.k .split-label{color:var(--K);}
+.split-box.a .split-label{color:var(--A);}
+.split-next{font-size:12px;color:var(--text2);margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+.split-next-icon{font-size:14px;}
+.activity-tag{display:inline-flex;align-items:center;gap:4px;border-radius:4px;padding:2px 8px;font-size:11px;font-weight:600;}
+.act-training{background:rgba(52,211,153,0.15);color:var(--K);}
+.act-spieltag{background:var(--coraldim);color:var(--coral);}
+.act-rest{background:var(--surface2);color:var(--text3);}
+.split-portions{font-size:13px;color:var(--text);}
+.split-portions li{padding:3px 0;display:flex;align-items:center;gap:8px;border-bottom:1px solid rgba(255,255,255,0.05);}
+.split-portions li:last-child{border-bottom:none;}
+.portion-qty{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;
+  min-width:52px;text-align:right;flex-shrink:0;}
+.split-box.k .portion-qty{color:var(--K);}
+.split-box.a .portion-qty{color:var(--A);}
+.split-adjust{margin-top:10px;background:rgba(255,255,255,0.04);border-radius:var(--rs);
+  padding:8px 12px;font-size:12px;color:var(--text2);line-height:1.5;}
+.split-adjust strong{color:var(--amber);}
+
+/* ZUBEREITUNG SHARED */
+.prep-shared{background:var(--surface);border-radius:var(--rs);padding:14px 16px;margin-bottom:16px;}
+.prep-shared h4{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;
+  color:var(--shared);margin-bottom:8px;display:flex;align-items:center;gap:8px;}
+.prep-steps{font-size:13px;color:var(--text2);line-height:1.8;}
+.prep-steps li{display:flex;align-items:flex-start;gap:8px;padding:3px 0;}
+.step-num{background:var(--surface2);color:var(--text3);border-radius:50%;width:20px;height:20px;
+  display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;margin-top:1px;}
+
+/* NUTRIENT ROW */
+.nutrient-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px;}
+.nutrient-box{background:var(--surface);border-radius:var(--rs);padding:10px 12px;text-align:center;}
+.nutrient-val{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;color:var(--text);}
+.nutrient-key{font-size:10px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-top:2px;}
+
+/* SCORE BARS */
+.score-section{margin-bottom:8px;}
+.score-row{display:flex;align-items:center;gap:10px;margin-bottom:6px;}
+.score-lbl{font-size:11px;color:var(--text3);font-weight:600;width:120px;flex-shrink:0;text-transform:uppercase;letter-spacing:.4px;}
+.score-bar-bg{flex:1;height:6px;background:var(--surface);border-radius:3px;overflow:hidden;}
+.score-bar-fill{height:100%;border-radius:3px;transition:width .6s cubic-bezier(.4,0,.2,1);}
+.bar-hunger{background:linear-gradient(90deg,var(--K),#6ee7b7);}
+.bar-growth{background:linear-gradient(90deg,var(--A),#93c5fd);}
+.score-val{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;width:36px;text-align:right;flex-shrink:0;}
+
+/* EINKAUF TOGGLE */
+.einkauf-toggle{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--text2);
+  cursor:pointer;padding:10px 0;border-top:1px solid var(--border);user-select:none;transition:color .2s;}
+.einkauf-toggle:hover{color:var(--text);}
+.einkauf-toggle .arrow{margin-left:auto;transition:transform .25s;font-size:12px;}
+.einkauf-toggle.open .arrow{transform:rotate(180deg);}
+.einkauf-list{display:none;margin-top:8px;}
+.einkauf-list.open{display:block;}
+.einkauf-item{display:flex;align-items:center;justify-content:space-between;padding:6px 0;
+  border-bottom:1px solid var(--border);font-size:13px;}
+.einkauf-item:last-child{border-bottom:none;}
+.einkauf-name{color:var(--text);}
+.einkauf-menge{color:var(--text2);font-size:12px;}
+.einkauf-preis{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;color:var(--amber);margin-left:12px;}
+
+/* CALENDAR */
+.cal-legend{display:flex;gap:20px;align-items:center;padding:12px 0 20px;flex-wrap:wrap;}
+.leg-item{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--text2);}
+.dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.dot-k{background:var(--K);} .dot-a{background:var(--A);}
+.dot-shared{background:linear-gradient(135deg,var(--K) 50%,var(--A) 50%);}
+.dot-spieltag{background:var(--coral);}
+.dot-cook{background:var(--shared);}
+
+.week-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:10px;margin-bottom:24px;}
+.week-col{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;
+  transition:border-color .2s;}
+.week-col:hover{border-color:var(--border2);}
+.week-day-hdr{padding:12px 14px 10px;border-bottom:1px solid var(--border);}
+.week-day-name{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;letter-spacing:.3px;}
+.week-day-info{font-size:11px;color:var(--text3);margin-top:2px;line-height:1.4;}
+.week-activity-k{font-size:11px;font-weight:600;margin-top:4px;padding:2px 8px;border-radius:4px;
+  background:var(--Kdim);color:var(--K);display:inline-block;}
+.week-activity-a{font-size:11px;font-weight:600;margin-top:4px;padding:2px 8px;border-radius:4px;
+  background:var(--Adim);color:var(--A);display:inline-block;}
+.week-activity-spieltag{font-size:11px;font-weight:600;margin-top:4px;padding:2px 8px;border-radius:4px;
+  background:var(--coraldim);color:var(--coral);display:inline-block;}
+.week-body{padding:12px 14px;}
+.week-dish{margin-bottom:10px;}
+.week-dish-emoji{font-size:24px;margin-bottom:4px;}
+.week-dish-name{font-size:12px;font-weight:600;color:var(--text);line-height:1.3;}
+.week-dish-code{font-size:11px;color:var(--text3);margin-top:2px;}
+.week-evening{margin-top:10px;padding-top:10px;border-top:1px dashed var(--border);}
+.cook-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;
+  color:var(--shared);display:flex;align-items:center;gap:4px;margin-bottom:4px;}
+.cook-dish{font-size:11px;color:var(--text2);line-height:1.4;}
+
+/* SHOPPING TABLE */
+.shop-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.shop-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:20px;transition:border-color .2s;}
+.shop-card:hover{border-color:var(--border2);}
+.shop-card-title{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;
+  margin-bottom:16px;display:flex;align-items:center;gap:8px;}
+.shop-table{width:100%;border-collapse:collapse;}
+.shop-table th{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.4px;
+  text-align:left;padding:0 8px 10px 0;border-bottom:1px solid var(--border);}
+.shop-table th:last-child{text-align:right;padding-right:0;}
+.shop-table td{padding:8px 8px 8px 0;font-size:13px;border-bottom:1px solid rgba(255,255,255,0.04);}
+.shop-table td:last-child{text-align:right;font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;
+  color:var(--amber);padding-right:0;}
+.shop-table tr:last-child td{border-bottom:none;}
+.shop-table .used-in{font-size:11px;color:var(--text3);display:block;margin-top:1px;}
+.shop-total{display:flex;justify-content:space-between;align-items:center;
+  margin-top:14px;padding-top:12px;border-top:1px solid var(--border2);font-weight:600;}
+.shop-total-price{font-family:'Barlow Condensed',sans-serif;font-size:24px;font-weight:800;color:var(--amber);}
+.shop-note{font-size:11px;color:var(--text3);margin-top:6px;}
+
+/* SCORING TABLE */
+.scoring-table-wrap{overflow-x:auto;border-radius:var(--r);border:1px solid var(--border);}
+.scoring-table{width:100%;border-collapse:collapse;}
+.scoring-table th{background:var(--surface);padding:11px 14px;font-size:11px;font-weight:600;
+  color:var(--text3);text-transform:uppercase;letter-spacing:.4px;text-align:left;
+  border-bottom:1px solid var(--border2);}
+.scoring-table td{padding:11px 14px;font-size:13px;border-bottom:1px solid var(--border);}
+.scoring-table tr:last-child td{border-bottom:none;}
+.scoring-table tr:hover td{background:rgba(255,255,255,0.02);}
+.sp-tag{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;
+  padding:2px 8px;border-radius:4px;display:inline-block;}
+.sp-k{background:var(--Kdim);color:var(--K);}
+.sp-a{background:var(--Adim);color:var(--A);}
+.sp-shared{background:var(--shareddim);color:var(--shared);}
+.score-num{font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:700;}
+.score-high{color:var(--K);}
+.score-mid{color:var(--amber);}
+
+/* ICAL BTN */
+.ical-section{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);
+  padding:24px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;gap:20px;}
+.ical-info h3{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;margin-bottom:6px;}
+.ical-info p{font-size:13px;color:var(--text2);}
+.ical-btns{display:flex;gap:10px;flex-shrink:0;}
+.btn{padding:9px 18px;border-radius:var(--rs);font-size:13px;font-weight:600;cursor:pointer;
+  border:1px solid var(--border2);background:none;color:var(--text2);transition:all .2s;font-family:'Barlow',sans-serif;}
+.btn:hover{background:var(--surface);color:var(--text);}
+.btn.primary{background:var(--amberdim);border-color:var(--amber);color:var(--amber);}
+.btn.primary:hover{background:rgba(251,191,36,.22);}
+.btn.k{background:var(--Kdim);border-color:rgba(52,211,153,.3);color:var(--K);}
+.btn.k:hover{background:rgba(52,211,153,.2);}
+.btn.a{background:var(--Adim);border-color:rgba(96,165,250,.3);color:var(--A);}
+.btn.a:hover{background:rgba(96,165,250,.2);}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  .athlete-cards,.week-grid,.athlete-split,.shop-grid{grid-template-columns:1fr;}
+  .week-grid{grid-template-columns:repeat(3,1fr);}
+  .hdr{padding:0 14px;}
+  .nav-tabs{display:none;}
+  .hero{padding:24px 14px 20px;}
+  .page{padding:0 14px 40px;}
+  .nutrient-row{grid-template-columns:repeat(2,1fr);}
+}
+@media(max-width:600px){
+  .week-grid{grid-template-columns:1fr 1fr;}
+  .ical-section{flex-direction:column;align-items:flex-start;}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="hdr">
+  <div class="hdr-logo">
+    <span class="k">K</span><span style="color:var(--text3);font-weight:400">&</span><span class="a">A</span>
+    <div>
+      <div>Gemeinsame Abendküche</div>
+      <div class="sub">Wochenplan · Konsolidiert 2025</div>
+    </div>
+  </div>
+  <nav class="nav-tabs">
+    <button class="nav-tab active" onclick="showPage('plan')">Wochenplan</button>
+    <button class="nav-tab" onclick="showPage('kalender')">Kalender</button>
+    <button class="nav-tab" onclick="showPage('einkauf')">Einkaufsliste</button>
+    <button class="nav-tab" onclick="showPage('scoring')">Scoring</button>
+  </nav>
+</header>
+
+<!-- HERO -->
+<div class="hero" style="max-width:1200px;margin:0 auto;">
+  <h1 class="hero-title">Gemeinsame Abendküche</h1>
+  <p class="hero-sub">K und A kochen jeden Abend das gleiche Gericht — mit individuellen Portionsanpassungen optimiert auf das Training des nächsten Tages. Alle 7 Gerichte bleiben erhalten, jede Mahlzeit ist auf Wachstum, Anti-Heißhunger und Leistung ausgerichtet.</p>
+  <div class="athlete-cards">
+    <div class="acard k">
+      <div class="acard-head">
+        <div class="avatar">K</div>
+        <div>
+          <div class="acard-name">Sportler K</div>
+          <div class="acard-stats"><span class="stat">11 Jahre</span><span class="stat">60 kg</span><span class="stat">160 cm</span><span class="stat">Basketball</span></div>
+        </div>
+      </div>
+      <div class="acard-goals">Ziel: Anti-Heißhunger · Wachstum · schnelle Energie ohne Übergewicht</div>
+      <div class="train-days">
+        <span class="daypill act">Mo</span><span class="daypill">Di</span><span class="daypill act">Mi</span>
+        <span class="daypill">Do</span><span class="daypill act">Fr</span><span class="daypill spieltag">Sa</span><span class="daypill">So</span>
+      </div>
+    </div>
+    <div class="acard a">
+      <div class="acard-head">
+        <div class="avatar">A</div>
+        <div>
+          <div class="acard-name">Sportler A</div>
+          <div class="acard-stats"><span class="stat">14 Jahre</span><span class="stat">55 kg</span><span class="stat">162 cm</span><span class="stat">Fußball</span></div>
+        </div>
+      </div>
+      <div class="acard-goals">Ziel: Längenwachstum · schnelle Energie · kein Übergewicht</div>
+      <div class="train-days">
+        <span class="daypill">Mo</span><span class="daypill act">Di</span><span class="daypill act">Mi</span>
+        <span class="daypill act">Do</span><span class="daypill">Fr</span><span class="daypill spieltag">Sa</span><span class="daypill">So</span>
+      </div>
+    </div>
+  </div>
+  <div class="konzept-banner">
+    <div class="konzept-icon">🍳</div>
+    <div class="konzept-text">
+      <h3>Konzept: Abend-Kochen für den nächsten Tag</h3>
+      <p>Jeden Abend bereiten K & A gemeinsam das gleiche Gericht zu — das Abendessen dient gleichzeitig als optimierte Mahlzeit für die morgigen Aktivitäten beider Sportler. Basis-Zubereitung ist identisch, Portionsgrößen werden individuell angepasst (z.B. mehr Kohlenhydrate vor Training, mehr Protein für Wachstum). Samstag und Sonntag sind vollständig identisch (beide Spieltag / beide Ruhetag).</p>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ PAGE: WOCHENPLAN ══════════════════ -->
+<div id="page-plan" class="page active">
+  <div class="sec-hdr">
+    <h2 class="sec-title">Wochenplan — Gemeinsame Abendküche</h2>
+    <span class="sec-sub">7 Abende · 7 gemeinsame Gerichte</span>
+  </div>
+
+  <div class="days-list">
+
+    <!-- SONNTAG ABEND → MONTAG -->
+    <div class="day-card" id="dc-so">
+      <div class="day-header" onclick="toggleDay('dc-so')">
+        <div class="day-label">
+          <div class="day-name">Sonntag</div>
+          <div class="day-context">Abend-Kochen</div>
+        </div>
+        <div class="day-dish-preview">
+          <div class="dish-emoji-big">🐟</div>
+          <div>
+            <div class="dish-preview-name">Lachs · Süßkartoffel · Spinat</div>
+            <div class="dish-preview-code">G07 · Nächster Tag: K=Basketball · A=Ruhe</div>
+          </div>
+        </div>
+        <span class="shared-badge">⚡ Gemeinsam</span>
+        <div class="day-expand-btn">▾</div>
+      </div>
+      <div class="day-body">
+        <div class="nutrient-row">
+          <div class="nutrient-box"><div class="nutrient-val">~530</div><div class="nutrient-key">Kcal Ø</div></div>
+          <div class="nutrient-box"><div class="nutrient-val">35g</div><div class="nutrient-key">Protein</div></div>
+          <div class="nutrient-box"><div class="nutrient-val">42g</div><div class="nutrient-key">Kohlenhydrate</div></div>
+          <div class="nutrient-box"><div class="nutrient-val">14g</div><div class="nutrient-key">Fett</div></div>
+        </div>
+        <div class="score-section">
+          <div class="score-row">
+            <div class="score-lbl">Anti-Heißhunger</div>
+            <div class="score-bar-bg"><div class="score-bar-fill bar-hunger" style="width:80%"></div></div>
+            <div class="score-val" style="color:var(--K)">8</div>
+          </div>
+          <div class="score-row">
+            <div class="score-lbl">Wachstum</div>
+            <div class="score-bar-bg"><div class="score-bar-fill bar-growth" style="width:90%"></div></div>
+            <div class="score-val" style="color:var(--A)">9</div>
+          </div>
+        </div>
+        <div class="athlete-split">
+          <div class="split-box k">
+            <div class="split-label">K — Montag</div>
+            <div class="split-next"><span class="split-next-icon">🏀</span><span class="activity-tag act-training">Basketball Training</span></div>
+            <ul class="split-portions" style="list-style:none;">
+              <li><span class="portion-qty">160g</span> Lachsfilet</li>
+              <li><span class="portion-qty">270g</span> Süßkartoffel <span style="color:var(--amber);font-size:11px">+90g KH-Loading</span></li>
+              <li><span class="portion-qty">90g</span> Blattspinat</li>
+              <li><span class="portion-qty">1 EL</span> Olivenöl</li>
+            </ul>
+            <div class="split-adjust"><strong>Strategie:</strong> +90g Süßkartoffel für Glykogen-Speicher vor Basketball. Omega-3 reduziert Muskelermüdung. Kcal: ~560</div>
+          </div>
+          <div class="split-box a">
+            <div class="split-label">A — Montag</div>
+            <div class="split-next"><span class="split-next-icon">😴</span><span class="activity-tag act-rest">Ruhetag</span></div>
+            <ul class="split-portions" style="list-style:none;">
+              <li><span class="portion-qty">130g</span> Lachsfilet</li>
+              <li><span class="portion-qty">180g</span> Süßkartoffel</li>
+              <li><span class="portion-qty">90g</span> Blattspinat</li>
+              <li><span class="portion-qty">1 EL</span> Olivenöl</li>
+            </ul>
+            <div class="split-adjust"><strong>Strategie:</strong> Standard-Portion. Omega-3 + Vit. D ideal für Regeneration nach Spielwoche. Kcal: ~490</div>
+          </div>
+        </div>
+        <div class="prep-shared">
+          <h4>🍳 Gemeinsame Zubereitung</h4>
+          <ol class="prep-steps">
+            <li><span class="step-num">1</span> Süßkartoffeln schälen, würfeln (2cm), 20 Min. im Ofen bei 200°C rösten (K-Portion extra)</li>
+            <li><span class="step-num">2</span> Lachs mit Zitrone, Knoblauch, Olivenöl in Pfanne 3–4 Min. je Seite braten</li>
+            <li><span class="step-num">3</span> Spinat in derselben Pfanne kurz anwilken (2 Min.), Salz + Prise Muskat</li>
+            <li><span class="step-num">4</span> Anrichten: Süßkartoffel-Basis, Lachs darauf, Spinat seitlich · K-Teller bekommt mehr Süßkartoffel</li>
+          </ol>
+        </div>
+        <div class="einkauf-toggle" onclick="toggleEinkauf(this)">🛒 Einkauf Sonntag-Abend <span class="arrow">▾</span></div>
+        <div class="einkauf-list">
+          <div class="einkauf-item"><span class="einkauf-name">Lachsfilet (frisch/TK)</span><span class="einkauf-menge">290g gesamt</span><span class="einkauf-preis">~3,80€</span></div>
+          <div class="einkauf-item"><span class="einkauf-name">Süßkartoffeln</span><span class="einkauf-menge">450g gesamt</span><span class="einkauf-preis">~1,20€</span></div>
+          <div class="einkauf-item"><span class="einkauf-name">Blattspinat (frisch)</span><span class="einkauf-menge">180g</span><span class="einkauf-preis">~1,50€</span></div>
+          <div class="einkauf-item"><span class="einkauf-name">Zitrone, Knoblauch</span><span class="einkauf-menge">je 1</span><span class="einkauf-preis">~0,50€</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MONTAG ABEND → DIENSTAG -->
+    <div class="day-card" id="dc-mo">
+      <div class="day-header" onclick="toggleDay('dc-mo')">
+        <div class="day-label">
+          <div class="day-name">Montag</div>
+          <div class="day-context">Abend-Kochen</div>
+        </div>
+        <div class="day-dish-preview">
+          <div class="dish-emoji-big">🍗</div>
+          <div>
+            <div class="dish-preview-name">Hähnchen · Reis · Broccoli</div>
+            <div class="dish-preview-code">G06 · Nächster Tag: K=Ruhe · A=Kraft+Fußball</div>
+          </div>
+        </div>
+        <span class="shared-badge">⚡ Gemeinsam</span>
+        <div class="day-expand-btn">▾</div>
+      </div>
+      <div class="day-body">
+        <div class="nutrient-row">
+          <div class="nutrient-box"><div class="nutrient-val">~510</div><div class="nutrient-key">Kcal Ø</div></div>
+          <div class="nutrient-box"><div class="nutrient-val">48g</div><div class="nutrient-key">Protein</div></div>
+          <div class="nutrient-box"><div class="nutrient-val">52g</div><div class="nutrient-key">Kohlenhydrate</div></div>
+          <div class="nutrient-box"><div class="nutrient-val">9g</div><div class="nutrient-key">Fett</div></div>
+        </div>
+        <div class="score-section">
+          <div class="score-row">
+            <div class="score-lbl">Anti-Heißhunger</div>
+            <div class="score-bar-bg"><div class="score-bar-fill bar-hunger" style="width:70%"></div></div>
+            <div class="score-val" style="color:var(--K)">7</div>
+          </div>
+          <div class="score-row">
+            <div class="score-lbl">Wachstum</div>
+            <div class="score-bar-bg"><div class="score-bar-fill bar-growth" style="width:90%"></div></div>
+            <div class="score-val" style="color:var(--A)">9</div>
+          </div>
+        </div>
+        <div class="athlete-split">
+          <div class="split-box k">
+            <div class="split-label">K — Dienstag</div>
+            <div class="split-next"><span class="split-next-icon">😴</span><span class="activity-tag act-rest">Ruhetag</span></div>
+            <ul class="split-portions" style="list-style:none;">
+              <li><span class="portion-qty">140g</span> Hähnchenbrust</li>
+              <li><span class="portion-qty">65g</span> Basmati-Reis (roh)</li>
+              <li><span class="portion-qty">200g</span> Broccoli</li>
+              <li><span class="portion-qty">1 EL</span> Olivenöl</li>
+            </ul>
+            <div class="split-adjust"><strong>Strategie:</strong> Moderate KH (Ruhetag). Hohes Protein für nächtlichen Wachstumshormon-Ausstoß. Kcal: ~470</div>
+          </div>
+          <div class="split-box a">
+            <div class="split-label">A — Dienstag</div>
+            <div class="split-next"><span class="split-next-icon">⚽</span><span class="activity-tag act-training">Kraft + Fußball</span></div>
+            <ul class="split-portions" style="list-style:none;">
+              <li><span class="portion-qty">160g</span> Hähnchenbrust</li>
+              <li><span class="portion-qty">110g</span> Basmati-Reis (roh) <span style="color:var(--amber);font-size:11px">+45g KH</span></li>
+              <li><span class="portion-qty">160g</span> Broccoli</li>
+              <li><span class="portion-qty">1 EL</span> Olivenöl</li>
+            </ul>
+            <div class="split-adjust"><strong>Strategie:</strong> +45g Reis für Glykogen vor Doppel-Training. Vitamin B6 aus Hähnchen optimiert Proteinverwertung. Kcal: ~550</div>
+          </div>
+        </div>
+        <div class="prep-shared">
+          <h4>🍳 Gemeinsame Zubereitung</h4>
+          <ol class="prep-steps">
+            <li><span class="step-num">1</span> Reis kochen: A-Portion (110g roh) und K-Portion (65g roh) separat oder markiert abmessen, gemeinsam kochen, dann aufteilen</li>
+            <li><span class="step-num">2</span> Hähnchenbrust in Streifen schneiden, mit Olivenöl, Knoblauch, Paprika würzen, 6–8 Min. anbraten</li>
+            <li><span class="step-num">3</span> Broccoli in Röschen teilen, 5 Min. im Dampfgarer oder kurz blanchieren</li>
+            <li><span class="step-num">4</span> Anrichten: Reis-Basis (K weniger, A mehr), Hähnchen drauf, Broccoli seitlich</li>
+          </ol>
+        </div>
+        <div class="einkauf-toggle" onclick="toggleEinkauf(this)">🛒 Einkauf Montag-Abend <span class="arrow">▾</span></div>
+        <div class="einkauf-list">
+          <div class="einkauf-item"><span class="einkauf-name">Hähnchenbrust</span><span class="einkauf-menge">300g gesamt</span><span class="einkauf-preis">~2,70€</span></div>
+          <div class="einkauf-item"><span class="einkauf-name">Basmati-Reis</span><span class="einkauf-menge">175g roh</span><span class="einkauf-preis">~0,60€</span></div>
+          <div class="einkauf-item"><span class="einkauf-name">Broccoli</span><span class="einkauf-menge">360g</span><span class="einkauf-preis">~1,20€</span></div>
+          <div class="einkauf-item"><span class="einkauf-name">Knoblauch, Paprikapulver</span><span class="einkauf-menge">Gewürze</span><span class="einkauf-preis">~0,30€</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DIENSTAG ABEND → MITTWOCH -->
+    <div class="day-card" id="dc-di">
+      <div class="day-header" onclick="toggleDay('dc-di')">
+        <div class="day-label">
+          <div class="day-name">Dienstag</div>
+          <div class="day-context">Abend-Kochen</div>
+        </div>
+        <div class="day-dish-preview">
+          <div class="dish-emoji-big">🥦</div>
+          <div>
+            <div class="dish-preview-name">Kartoffel · Rind · Broccoli</div>
+            <div class="dish-preview-code">G04 · Nächster Tag: K=Jogging · A=Fußball</div>
+          </div>
+        </div>
+        <span class="shared-badge">⚡ Gemeinsam</span>
+        <div class="day-expand-btn">▾</div>
+      </div>
+      <div class="day-body">
+        <div class="nutrient-row">
+          <div class="nutrient-box"><div class="nutrient-val">~560</div><div class="nutrient-key">Kcal Ø</div></div>
+          <div class="nutrient-box"><div class="nutrient-val">42g</div><div class="nutrient-key">Protein</div></div>
+          <div class="nutrient-box"><div class="nutrient-val">48g</div><div class="nutrient-key">Kohlenhydrate</div></div>
+          <div class="nutrient-box"><div class="nutrient-val">14g</div><div class="nutrient-key">Fett</div></div>
+        </div>
+        <div class="score-section">
+          <div class="score-row">
+            <div class="score-lbl">Anti-Heißhunger</div>
+            <div class="score-bar-bg"><div class="score-bar-fill bar-hunger" style="width:90%"></div></div>
+            <div class="score-val" style="color:var(--K)">9</div>
+          </div>
+          <div class="score-row">
+            <div class="score-lbl">Wachstum</div>
+            <div class="score-bar-bg"><div class="score-bar-fill bar-growth" style="width:90%"></div></div>
+            <div class="score-val" style="color:var(--A)">9</div>
+          </div>
+        </div>
+        <div class="athlete-split">
+          <div class="split-box k">
+            <div class="split-label">K — Mittwoch</div>
+            <div class="split-next"><span class="split-next-icon">🏃</span><span class="activity-tag act-training">Ausdauer Jogging</span></div>
+            <ul class="split-portions" style="list-style:none;">
+              <li><span class="portion-qty">120g</span> Rinderfilet</li>
+              <li><span class="portion-qty">260g</span> Pellkartoffeln</li>
+              <li><span class="portion-qty">220g</span> Broccoli <span style="color:var(--amber);font-size:11px">+70g I3C</span></li>
+              <li><span class="portion-qty">1 EL</span> Olivenöl</li>
+            </ul>
+            <div class="split-adjust"><strong>Strategie:</strong> Extra Broccoli für I3C (Hormonsupport nach Ausdauer+Lauf). Rind liefert Hämoglobin-Vorstufen für O₂-Transport. Kcal: ~570</div>
+          </div>
+          <div class="split-box a">
+            <div class="split-label">A — Mittwoch</div>
+            <div class="split-next"><span class="split-next-icon">⚽</span><span class="activity-tag act-training">Fußball Training</span></div>
+            <ul class="split-portions" style="list-style:none;">
+              <li><span class="portion-qty">100g</span> Rinderfilet</li>
+              <li><span class="portion-qty">230g</span> Pellkartoffeln</li>
+              <li><span class="portion-qty">160g</span> Broccoli</li>
+              <li><span class="portion-qty">1 EL</span> Olivenöl</li>
+            </ul>
+            <div class="split-adjust"><strong>Strategie:</strong> Ausgewogenes Verhältnis KH/Protein für Fußball-Training. Kreatin aus Rind unterstützt Schnellkraft-Sprints. Kcal: ~540</div>
+          </div>
+        </div>
+        <div class="prep-shared">
+          <h4>🍳 Gemeinsame Zubereitung</h4>
+          <ol class="prep-steps">
+            <li><span class="step-num">1</span> Kartoffeln als Pellkartoffeln kochen (20 Min.), Mengen getrennt abwiegen</li>
+            <li><span class="step-num">2</span> Rinderfilet in Scheiben (1cm), in heißer Pfanne 2–3 Min. je Seite — medium rare für maximale Nährwerte</li>
+            <li><span class="step-num">3</span> Broccoli 5 Min. dämpfen oder blanchieren (K bekommt extra Portion)</li>
+            <li><span class="step-num">4</span> Mit Olivenöl beträufeln, Meersalz, schwarzer Pfeffer. K-Teller: deutlich mehr Broccoli</li>
+          </ol>
+        </div>
+        <div class="einkauf-toggle" onclick="toggleEinkauf(this)">🛒 Einkauf Dienstag-Abend <span class="arrow">▾</span></div>
+        <div class="einkauf-list">
+          <div class="einkauf-item"><span class="einkauf-name">Rinderfilet</span><span class="einkauf-menge">220g gesamt</span><span class="einkauf-preis">~4,40€</span></div>
+          <div class="einkauf-item"><span class="einkauf-name">Kartoffeln (festkochend)</span><span class="einkauf-menge">490g</span><span class="einkauf-preis">~1,00€</span></div>
+          <div class="einkauf-item"><span class="einkauf-name">Broccoli</span><span class="einkauf-menge">380g</span><span class="einkauf-preis">~1,30€</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MITTWOCH ABEND → DONNERSTAG -->
+    <div class="day-card" id="dc-mi">
+      <div class="day-header" onclick="toggleDay('dc-mi')">
+        <div class="day-label">
+          <div class="day-name">Mittwoch</div>
+          <div class="day-context">Abend-Kochen</div>
+        </div>
+        <div class="day-dish-preview">
+          <div class="dish-emoji-big">🥚</div>
+          <div>
+            <div class="dish-preview-name">Kartoffel · Ei · Spinat</div>
+            <div class="dish-preview-code">G01 · Nächster Tag: K=Ruhe · A=Ausdauer+Kraft</div>
+          </div>
+        </div>
+        <span class="shared-badge">⚡ Gemeinsam</span>
+        <div class="day-expand-btn">▾</div>
+      </div>
+      <div class="day-body">
+        <div class="nutrient-row">
+          <div class="nutrient-box"><div class="nutrient-val">~490</div><div class="nutrient-key">Kcal Ø</div></div>
+          <div class="nutrient-box"><div class="nutrient-val">28g</div><div class="nutrient-key">Protein</div></div>
+          <div class="nutrient-box"><div class="nutrient-val">46g</div><div class="nutrient-key">Kohlenhydrate</div></div>
+          <div class="nutrient-box"><div class="nutrient-val">16g</div><div class="nutrient-key">Fett (Ei)</div></div>
+        </div>
+        <div class="score-section">
+          <div class="score-row">
+            <div class="score-lbl">Anti-Heißhunger</div>
+            <div class="score-bar-bg"><div class="score-bar-fill bar-hunger" style="width:100%"></div></div>
+            <div class="score-val" style="color:var(--K)">10</div>
+          </div>
+          <div class="score-row">
+            <div class="score-lbl">Wachstum</div>
+            <div class="score-bar-bg"><div class="score-bar-fill bar-growth" style="width:100%"></div></div>
+            <div class="score-val" style="color:var(--A)">10</div>
+          </div>
+        </div>
+        <div class="athlete-split">
+          <div class="split-box k">
+            <div class="split-label">K — Donnerstag</div>
+            <div class="split-next"><span class="split-next-icon">😴</span><span class="activity-tag act-rest">Ruhetag</span></div>
+            <ul class="split-portions" style="list-style:none;">
+              <li><span class="portion-qty">260g</span> Pellkartoffeln</li>
+              <li><span class="portion-qty">3 Stk.</span> Eier (Freiland)</li>
+              <li><span class="portion-qty">110g</span> Blattspinat</li>
+              <li><span class="portion-qty">1 EL</span> Olivenöl</li>
+            </ul>
+            <div class="split-adjust"><strong>Strategie:</strong> Max. bio. Wertigkeit (136) an Ruhetag für optimale Regeneration + Wachstum. Cholesterin aus Ei = Wachstumshormon-Vorstufe. Kcal: ~480</div>
+          </div>
+          <div class="split-box a">
+            <div class="split-label">A — Donnerstag</div>
+            <div class="split-next"><span class="split-next-icon">💪</span><span class="activity-tag act-training">Ausdauer + Kraft</span></div>
+            <ul class="split-portions" style="list-style:none;">
+              <li><span class="portion-qty">230g</span> Pellkartoffeln</li>
+              <li><span class="portion-qty">4 Stk.</span> Eier (Freiland) <span style="color:var(--amber);font-size:11px">+1 Ei</span></li>
+              <li><span class="portion-qty">100g</span> Blattspinat</li>
+              <li><span class="portion-qty">100g</span> Hokkaido-Kürbis <span style="color:var(--amber);font-size:11px">+Mg Beilage</span></li>
+              <li><span class="portion-qty">1 EL</span> Olivenöl</li>
+            </ul>
+            <div class="split-adjust"><strong>Strategie:</strong> +1 Ei für mehr Protein vor Kraft-Training. Kürbis liefert Magnesium + Vit. A für Muskelentspannung und Wachstum. Kcal: ~530</div>
+          </div>
+        </div>
+        <div class="prep-shared">
+          <h4>🍳 Gemeinsame Zubereitung</h4>
+          <ol class="prep-steps">
+            <li><span class="step-num">1</span> Kartoffeln als Pellkartoffeln kochen (20 Min.), Hokkaido-Kürbis würfeln und separat 15 Min. im Ofen rösten (nur für A)</li>
+            <li><span class="step-num">2</span> Eier: K=3 Stk. Spiegelei, A=4 Stk. Rührei oder Spiegelei — gleichzeitig in zwei Pfannen braten</li>
+            <li><span class="step-num">3</span> Spinat gemeinsam in Pfanne mit Knoblauch und Olivenöl anwilken (2–3 Min.)</li>
+            <li><span class="step-num">4</span> Anrichten: K — Kartoffel + Ei + Spinat · A — Kartoffel + Ei + Spinat + Kürbis</li>
+          </ol>
+        </div>
+        <div class="einkauf-toggle" onclick="toggleEinkauf(this)">🛒 Einkauf Mittwoch-Abend <span class="arrow">▾</span></div>
+        <div class="einkauf-list">
+          <div class="einkauf-item"><span class="einkauf-name">Eier (Freilandhaltung)</span><span class="einkauf-menge">7 Stück</span><span class="einkauf-preis">~2,10€</span></div>
+          <div class="einkauf-item"><span class="einkauf-name">Kartoffeln</span><span class="einkauf-menge">490g</span><span class="einkauf-preis">~1,00€</span></div>
+          <div class="einkauf-item"><span class="einkauf-name">Blattspinat (frisch)</span><span class="einkauf-menge">210g</span><span class="einkauf-preis">~1,80€</span></div>
+          <div class="einkauf-item"><span class="einkauf-name">Hokkaido-Kürbis</span><span class="einkauf-menge">100g (nur A)</span><span class="einkauf-preis">~0,60€</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DONNERSTAG ABEND → FREITAG -->
+    <div class="day-card" id="dc-do">
+      <div class="day-header" onclick="toggleDay('dc-do')">
+        <div class="day-label">
+          <div class="day-name">Donnerstag</div>
+          <div class="day-context">Abend-Kochen</div>
+        </div>
+        <div class="day-dish-preview">
+          <div class="dish-emoji-big">🍚</div>
+          <div>
+            <div class="dish-preview-name">Reis · Ei · Spinat</div>
+            <div class="dish-preview-code">G02 · Nächster Tag: K=Basketball · A=Ruhe</div>
+          </div>
+        </div>
+        <span class="shared-badge">⚡ Gemeinsam</span>
+        <div class="day-expand-btn">▾</div>
+      </div>
+      <div class="day-body">
+        <div class="nutrient-row">
+          <div class="nutrient-box"><div class="nutrient-val">~500</div><div class="nutrient-key">Kcal Ø</div></div>
+          <div class="nutrient-box"><div class="nutrient-val">24g</div><div class="nutrient-key">Protein</div></div>
+          <div class="nutrient-box"><div class="nutrient-val">64g</div><div class="nutrient-key">Kohlenhydrate</div></div>
+          <div class="nutrient-box"><div class="nutrient-val">10g</div><div class="nutrient-key">Fett</div></div>
+        </div>
+        <div class="score-section">
+          <div class="score-row">
+            <div class="score-lbl">Anti-Heißhunger</div>
+            <div class="score-bar-bg"><div class="score-bar-fill bar-hunger" style="width:60%"></div></div>
+            <div class="score-val" style="color:var(--K)">6</div>
+          </div>
+          <div class="score-row">
+            <div class="score-lbl">Wachstum</div>
+            <div class="score-bar-bg"><div class="score-bar-fill bar-growth" style="width:80%"></div></div>
+            <div class="score-val" style="color:var(--A)">8</div>
+          </div>
+        </div>
+        <div class="athlete-split">
+          <div class="split-box k">
+            <div class="split-label">K — Freitag</div>
+            <div class="split-next"><span class="split-next-icon">🏀</span><span class="activity-tag act-training">Basketball Training</span></div>
+            <ul class="split-portions" style="list-style:none;">
+              <li><span class="portion-qty">100g</span> Basmati-Reis (roh) <span style="color:var(--amber);font-size:11px">+30g KH-Speicher</span></li>
+              <li><span class="portion-qty">3 Stk.</span> Eier (Freiland)</li>
+              <li><span class="portion-qty">100g</span> Blattspinat</li>
+              <li><span class="portion-qty">1 EL</span> Olivenöl</li>
+            </ul>
+            <div class="split-adjust"><strong>Strategie:</strong> +30g Reis für KH-Speicher vor Basketball-Freitag + Spieltag Samstag. Doppelte Tankfüllung. Kcal: ~540</div>
+          </div>
+          <div class="split-box a">
+            <div class="split-label">A — Freitag</div>
+            <div class="split-next"><span class="split-next-icon">😴</span><span class="activity-tag act-rest">Ruhetag</span></div>
+            <ul class="split-portions" style="list-style:none;">
+              <li><span class="portion-qty">70g</span> Basmati-Reis (roh)</li>
+              <li><span class="portion-qty">2 Stk.</span> Eier (Freiland)</li>
+              <li><span class="portion-qty">90g</span> Blattspinat</li>
+              <li><span class="portion-qty">1 EL</span> Olivenöl</li>
+            </ul>
+            <div class="split-adjust"><strong>Strategie:</strong> Leichtere Portion (Ruhetag). Bio. Wertigkeit aus Ei für Regeneration nach Do-Doppeltraining. Kcal: ~450</div>
+          </div>
+        </div>
+        <div class="prep-shared">
+          <h4>🍳 Gemeinsame Zubereitung</h4>
+          <ol class="prep-steps">
+            <li><span class="step-num">1</span> Basmati-Reis separat messen (K=100g, A=70g roh), gemeinsam in einem Topf kochen — später aufteilen</li>
+            <li><span class="step-num">2</span> Eier: K=3 Spiegeleier, A=2 Spiegeleier — gleichzeitig in einer großen Pfanne braten</li>
+            <li><span class="step-num">3</span> Spinat mit Olivenöl und etwas Muskat anwilken (2 Min.)</li>
+            <li><span class="step-num">4</span> Bowl-Stil anrichten: Reis-Basis · Spinat · Ei obendrauf · Sesamöl-Spritzer optional</li>
+          </ol>
+        </div>
+        <div class="einkauf-toggle" onclick="toggleEinkauf(this)">🛒 Einkauf Donnerstag-Abend <span class="arrow">▾</span></div>
+        <div class="einkauf-list">
+          <div class="einkauf-item"><span class="einkauf-name">Basmati-Reis</span><span class="einkauf-menge">170g roh</span><span class="einkauf-preis">~0,55€</span></div>
+          <div class="einkauf-item"><span class="einkauf-name">Eier (Freilandhaltung)</span><span class="einkauf-menge">5 Stück</span><span class="einkauf-preis">~1,50€</span></div>
+          <div class="einkauf-item"><span class="einkauf-name">Blattspinat (frisch)</span><span class="einkauf-menge">190g</span><span class="einkauf-preis">~1,60€</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FREITAG ABEND → SAMSTAG (SPIELTAG) -->
+    <div class="day-card" id="dc-fr">
+      <div class="day-header" onclick="toggleDay('dc-fr')">
+        <div class="day-label">
+          <div class="day-name">Freitag</div>
+          <div class="day-context">Abend-Kochen</div>
+        </div>
+        <div class="day-dish-preview">
+          <div class="dish-emoji-big">🥩</div>
+          <div>
+            <div class="dish-preview-name">Kartoffel · Rind · Spinat</div>
+            <div class="dish-preview-code">G05 · Nächster Tag: K=Spieltag 🔴 · A=Spieltag 🔴</div>
+          </div>
+        </div>
+        <span class="shared-badge">🔴 Identisch</span>
+        <div class="day-expand-btn">▾</div>
+      </div>
+      <div class="day-body">
+        <div class="nutrient-row">
+          <div class="nutrient-box"><div class="nutrient-val">~540</div><div class="nutrient-key">Kcal (beide)</div></div>
+          <div class="nutrient-box"><div class="nutrient-val">40g</div><div class="nutrient-key">Protein</div></div>
+          <div class="nutrient-box"><div class="nutrient-val">44g</div><div class="nutrient-key">Kohlenhydrate</div></div>
+          <div class="nutrient-box"><div class="nutrient-val">14g</div><div class="nutrient-key">Fett</div></div>
+        </div>
+        <div class="score-section">
+          <div class="score-row">
+            <div class="score-lbl">Anti-Heißhunger</div>
+            <div class="score-bar-bg"><div class="score-bar-fill bar-hunger" style="width:80%"></div></div>
+            <div class="score-val" style="color:var(--K)">8</div>
+          </div>
+          <div class="score-row">
+            <div class="score-lbl">Wachstum</div>
+            <div class="score-bar-bg"><div class="score-bar-fill bar-growth" style="width:90%"></div></div>
+            <div class="score-val" style="color:var(--A)">9</div>
+          </div>
+        </div>
+        <div class="athlete-split">
+          <div class="split-box k">
+            <div class="split-label">K — Samstag</div>
+            <div class="split-next"><span class="split-next-icon">🏆</span><span class="activity-tag act-spieltag">SPIELTAG Basketball</span></div>
+            <ul class="split-portions" style="list-style:none;">
+              <li><span class="portion-qty">120g</span> Rinderfilet</li>
+              <li><span class="portion-qty">280g</span> Pellkartoffeln</li>
+              <li><span class="portion-qty">130g</span> Blattspinat</li>
+              <li><span class="portion-qty">1 EL</span> Olivenöl</li>
+            </ul>
+            <div class="split-adjust"><strong>Strategie:</strong> Fe (Eisen) aus Rind + Nitrate aus Spinat = maximale O₂-Versorgung für Spieltag. Identische Portion wie A. Kcal: ~540</div>
+          </div>
+          <div class="split-box a">
+            <div class="split-label">A — Samstag</div>
+            <div class="split-next"><span class="split-next-icon">🏆</span><span class="activity-tag act-spieltag">SPIELTAG Fußball</span></div>
+            <ul class="split-portions" style="list-style:none;">
+              <li><span class="portion-qty">120g</span> Rinderfilet</li>
+              <li><span class="portion-qty">280g</span> Pellkartoffeln</li>
+              <li><span class="portion-qty">130g</span> Blattspinat</li>
+              <li><span class="portion-qty">1 EL</span> Olivenöl</li>
+            </ul>
+            <div class="split-adjust"><strong>Strategie:</strong> Identisch — beide brauchen Fe + Nitrate vor Wettkampf. Einfachste gemeinsame Zubereitung der Woche. Kcal: ~540</div>
+          </div>
+        </div>
+        <div class="prep-shared">
+          <h4>🍳 Gemeinsame Zubereitung — Identisch</h4>
+          <ol class="prep-steps">
+            <li><span class="step-num">1</span> Kartoffeln als Pellkartoffeln kochen (20 Min.) — 560g gesamt für beide</li>
+            <li><span class="step-num">2</span> Rinderfilet (240g) in der Pfanne medium-rare braten, 2–3 Min. je Seite bei hoher Hitze</li>
+            <li><span class="step-num">3</span> Spinat (260g) in Olivenöl anwilken mit Knoblauch — Nitrate bleiben erhalten</li>
+            <li><span class="step-num">4</span> Beide Teller identisch befüllen — kein Aufteilen nötig!</li>
+          </ol>
+        </div>
+        <div class="einkauf-toggle" onclick="toggleEinkauf(this)">🛒 Einkauf Freitag-Abend <span class="arrow">▾</span></div>
+        <div class="einkauf-list">
+          <div class="einkauf-item"><span class="einkauf-name">Rinderfilet</span><span class="einkauf-menge">240g gesamt</span><span class="einkauf-preis">~4,80€</span></div>
+          <div class="einkauf-item"><span class="einkauf-name">Kartoffeln (festkochend)</span><span class="einkauf-menge">560g</span><span class="einkauf-preis">~1,20€</span></div>
+          <div class="einkauf-item"><span class="einkauf-name">Blattspinat (frisch)</span><span class="einkauf-menge">260g</span><span class="einkauf-preis">~2,20€</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SAMSTAG ABEND → SONNTAG -->
+    <div class="day-card" id="dc-sa">
+      <div class="day-header" onclick="toggleDay('dc-sa')">
+        <div class="day-label">
+          <div class="day-name">Samstag</div>
+          <div class="day-context">Abend-Kochen</div>
+        </div>
+        <div class="day-dish-preview">
+          <div class="dish-emoji-big">🥦</div>
+          <div>
+            <div class="dish-preview-name">Kartoffel · Rind · Broccoli</div>
+            <div class="dish-preview-code">G04 · Nächster Tag: K=Ruhe · A=Ruhe</div>
+          </div>
+        </div>
+        <span class="shared-badge">✅ Identisch</span>
+        <div class="day-expand-btn">▾</div>
+      </div>
+      <div class="day-body">
+        <div class="nutrient-row">
+          <div class="nutrient-box"><div class="nutrient-val">~560</div><div class="nutrient-key">Kcal (beide)</div></div>
+          <div class="nutrient-box"><div class="nutrient-val">42g</div><div class="nutrient-key">Protein</div></div>
+          <div class="nutrient-box"><div class="nutrient-val">48g</div><div class="nutrient-key">Kohlenhydrate</div></div>
+          <div class="nutrient-box"><div class="nutrient-val">14g</div><div class="nutrient-key">Fett</div></div>
+        </div>
+        <div class="score-section">
+          <div class="score-row">
+            <div class="score-lbl">Anti-Heißhunger</div>
+            <div class="score-bar-bg"><div class="score-bar-fill bar-hunger" style="width:90%"></div></div>
+            <div class="score-val" style="color:var(--K)">9</div>
+          </div>
+          <div class="score-row">
+            <div class="score-lbl">Wachstum</div>
+            <div class="score-bar-bg"><div class="score-bar-fill bar-growth" style="width:90%"></div></div>
+            <div class="score-val" style="color:var(--A)">9</div>
+          </div>
+        </div>
+        <div class="athlete-split">
+          <div class="split-box k">
+            <div class="split-label">K — Sonntag</div>
+            <div class="split-next"><span class="split-next-icon">😴</span><span class="activity-tag act-rest">Ruhetag</span></div>
+            <ul class="split-portions" style="list-style:none;">
+              <li><span class="portion-qty">120g</span> Rinderfilet</li>
+              <li><span class="portion-qty">280g</span> Pellkartoffeln</li>
+              <li><span class="portion-qty">190g</span> Broccoli</li>
+              <li><span class="portion-qty">1 EL</span> Olivenöl</li>
+            </ul>
+            <div class="split-adjust"><strong>Strategie:</strong> I3C aus Broccoli + Immunsystem-Boost nach Spieltag. Protein für Muskelreparatur über Nacht. Kcal: ~560</div>
+          </div>
+          <div class="split-box a">
+            <div class="split-label">A — Sonntag</div>
+            <div class="split-next"><span class="split-next-icon">😴</span><span class="activity-tag act-rest">Ruhetag</span></div>
+            <ul class="split-portions" style="list-style:none;">
+              <li><span class="portion-qty">120g</span> Rinderfilet</li>
+              <li><span class="portion-qty">280g</span> Pellkartoffeln</li>
+              <li><span class="portion-qty">190g</span> Broccoli</li>
+              <li><span class="portion-qty">1 EL</span> Olivenöl</li>
+            </ul>
+            <div class="split-adjust"><strong>Strategie:</strong> Identisch — beide im Regenerationsmodus. I3C aus Broccoli + Immunschutz. Einfachste Woche endet einfach. Kcal: ~560</div>
+          </div>
+        </div>
+        <div class="prep-shared">
+          <h4>🍳 Gemeinsame Zubereitung — Identisch</h4>
+          <ol class="prep-steps">
+            <li><span class="step-num">1</span> Kartoffeln als Pellkartoffeln kochen (20 Min.) — 560g gesamt</li>
+            <li><span class="step-num">2</span> Rinderfilet (240g) kurz und scharf anbraten — Spitzen bleiben saftig</li>
+            <li><span class="step-num">3</span> Broccoli (380g) dämpfen, bissfest lassen — maximale Nährstoffdichte</li>
+            <li><span class="step-num">4</span> Beide Teller identisch — Post-Spieltag Erholung für K & A</li>
+          </ol>
+        </div>
+        <div class="einkauf-toggle" onclick="toggleEinkauf(this)">🛒 Einkauf Samstag-Abend <span class="arrow">▾</span></div>
+        <div class="einkauf-list">
+          <div class="einkauf-item"><span class="einkauf-name">Rinderfilet</span><span class="einkauf-menge">240g gesamt</span><span class="einkauf-preis">~4,80€</span></div>
+          <div class="einkauf-item"><span class="einkauf-name">Kartoffeln</span><span class="einkauf-menge">560g</span><span class="einkauf-preis">~1,20€</span></div>
+          <div class="einkauf-item"><span class="einkauf-name">Broccoli</span><span class="einkauf-menge">380g</span><span class="einkauf-preis">~1,30€</span></div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end days-list -->
+</div>
+
+<!-- ══════════════════ PAGE: KALENDER ══════════════════ -->
+<div id="page-kalender" class="page">
+  <div class="ical-section">
+    <div class="ical-info">
+      <h3>📅 Kalender exportieren</h3>
+      <p>iCal-Datei herunterladen — kompatibel mit Google Kalender, Apple Kalender, Outlook. Enthält alle Abend-Koch-Events und Trainings-Übersichten für K & A.</p>
+    </div>
+    <div class="ical-btns">
+      <button class="btn k" onclick="exportIcal('K')">⬇ iCal Sportler K</button>
+      <button class="btn a" onclick="exportIcal('A')">⬇ iCal Sportler A</button>
+      <button class="btn primary" onclick="exportIcal('BEIDE')">⬇ iCal Beide</button>
+    </div>
+  </div>
+  <div class="cal-legend">
+    <div class="leg-item"><div class="dot dot-k"></div> K Training / Spieltag</div>
+    <div class="leg-item"><div class="dot dot-a"></div> A Training / Spieltag</div>
+    <div class="leg-item"><div class="dot dot-shared"></div> Beide Spieltag</div>
+    <div class="leg-item"><div class="dot dot-cook"></div> Gemeinsames Kochen (Abend)</div>
+    <div class="leg-item"><div class="dot dot-spieltag"></div> Spieltag</div>
+  </div>
+  <div class="week-grid">
+    <!-- MO -->
+    <div class="week-col">
+      <div class="week-day-hdr">
+        <div class="week-day-name">Mo</div>
+        <div class="week-activity-k">🏀 K Basketball</div>
+        <div class="week-day-info" style="margin-top:3px;color:var(--text3)">A: Ruhetag</div>
+      </div>
+      <div class="week-body">
+        <div class="week-dish">
+          <div class="week-dish-emoji">🐟</div>
+          <div class="week-dish-name">Lachs · Süßkartoffel · Spinat</div>
+          <div class="week-dish-code">G07 · Abend So→Mo</div>
+        </div>
+        <div class="week-evening">
+          <div class="cook-label">🍳 Abend-Küche</div>
+          <div class="cook-dish">→ Di: <strong>G06</strong> Hähnchen+Reis+Broccoli</div>
+        </div>
+      </div>
+    </div>
+    <!-- DI -->
+    <div class="week-col">
+      <div class="week-day-hdr">
+        <div class="week-day-name">Di</div>
+        <div class="week-activity-a">⚽ A Kraft+Fußball</div>
+        <div class="week-day-info" style="margin-top:3px;color:var(--text3)">K: Ruhetag</div>
+      </div>
+      <div class="week-body">
+        <div class="week-dish">
+          <div class="week-dish-emoji">🍗</div>
+          <div class="week-dish-name">Hähnchen · Reis · Broccoli</div>
+          <div class="week-dish-code">G06 · Mo-Abend vorbereitet</div>
+        </div>
+        <div class="week-evening">
+          <div class="cook-label">🍳 Abend-Küche</div>
+          <div class="cook-dish">→ Mi: <strong>G04</strong> Kartoffel+Rind+Broccoli</div>
+        </div>
+      </div>
+    </div>
+    <!-- MI -->
+    <div class="week-col">
+      <div class="week-day-hdr">
+        <div class="week-day-name">Mi</div>
+        <div class="week-activity-k">🏃 K Jogging</div>
+        <div class="week-activity-a">⚽ A Fußball</div>
+      </div>
+      <div class="week-body">
+        <div class="week-dish">
+          <div class="week-dish-emoji">🥦</div>
+          <div class="week-dish-name">Kartoffel · Rind · Broccoli</div>
+          <div class="week-dish-code">G04 · Di-Abend vorbereitet</div>
+        </div>
+        <div class="week-evening">
+          <div class="cook-label">🍳 Abend-Küche</div>
+          <div class="cook-dish">→ Do: <strong>G01</strong> Kartoffel+Ei+Spinat</div>
+        </div>
+      </div>
+    </div>
+    <!-- DO -->
+    <div class="week-col">
+      <div class="week-day-hdr">
+        <div class="week-day-name">Do</div>
+        <div class="week-activity-a">💪 A Ausdauer+Kraft</div>
+        <div class="week-day-info" style="margin-top:3px;color:var(--text3)">K: Ruhetag</div>
+      </div>
+      <div class="week-body">
+        <div class="week-dish">
+          <div class="week-dish-emoji">🥚</div>
+          <div class="week-dish-name">Kartoffel · Ei · Spinat</div>
+          <div class="week-dish-code">G01 · Mi-Abend vorbereitet</div>
+        </div>
+        <div class="week-evening">
+          <div class="cook-label">🍳 Abend-Küche</div>
+          <div class="cook-dish">→ Fr: <strong>G02</strong> Reis+Ei+Spinat</div>
+        </div>
+      </div>
+    </div>
+    <!-- FR -->
+    <div class="week-col">
+      <div class="week-day-hdr">
+        <div class="week-day-name">Fr</div>
+        <div class="week-activity-k">🏀 K Basketball</div>
+        <div class="week-day-info" style="margin-top:3px;color:var(--text3)">A: Ruhetag</div>
+      </div>
+      <div class="week-body">
+        <div class="week-dish">
+          <div class="week-dish-emoji">🍚</div>
+          <div class="week-dish-name">Reis · Ei · Spinat</div>
+          <div class="week-dish-code">G02 · Do-Abend vorbereitet</div>
+        </div>
+        <div class="week-evening">
+          <div class="cook-label">🍳 Abend-Küche</div>
+          <div class="cook-dish">→ Sa: <strong>G05</strong> Kartoffel+Rind+Spinat</div>
+        </div>
+      </div>
+    </div>
+    <!-- SA -->
+    <div class="week-col">
+      <div class="week-day-hdr">
+        <div class="week-day-name">Sa</div>
+        <div style="font-size:11px;font-weight:600;margin-top:4px;padding:2px 8px;border-radius:4px;background:var(--coraldim);color:var(--coral);display:inline-block;">🏆 K+A SPIELTAG</div>
+      </div>
+      <div class="week-body">
+        <div class="week-dish">
+          <div class="week-dish-emoji">🥩</div>
+          <div class="week-dish-name">Kartoffel · Rind · Spinat</div>
+          <div class="week-dish-code">G05 · Fr-Abend · Identisch</div>
+        </div>
+        <div class="week-evening">
+          <div class="cook-label">🍳 Abend-Küche</div>
+          <div class="cook-dish">→ So: <strong>G04</strong> Kartoffel+Rind+Broccoli</div>
+        </div>
+      </div>
+    </div>
+    <!-- SO -->
+    <div class="week-col">
+      <div class="week-day-hdr">
+        <div class="week-day-name">So</div>
+        <div class="week-day-info" style="color:var(--text3);margin-top:4px;">K + A: Ruhetag</div>
+      </div>
+      <div class="week-body">
+        <div class="week-dish">
+          <div class="week-dish-emoji">🥦</div>
+          <div class="week-dish-name">Kartoffel · Rind · Broccoli</div>
+          <div class="week-dish-code">G04 · Sa-Abend · Identisch</div>
+        </div>
+        <div class="week-evening">
+          <div class="cook-label">🍳 Abend-Küche</div>
+          <div class="cook-dish">→ Mo: <strong>G07</strong> Lachs+Süßkartoffel+Spinat</div>
+        </div>
+      </div>
+    </div>
+  </div><!-- end week-grid -->
+</div>
+
+<!-- ══════════════════ PAGE: EINKAUFSLISTE ══════════════════ -->
+<div id="page-einkauf" class="page">
+  <div class="sec-hdr">
+    <h2 class="sec-title">Wocheneinkauf — Konsolidiert</h2>
+    <span class="sec-sub">Optimiert für 2 Personen · ~80 EUR/Woche</span>
+  </div>
+  <div class="shop-grid">
+    <div class="shop-card">
+      <div class="shop-card-title">🥩 Protein-Quellen</div>
+      <table class="shop-table">
+        <thead><tr><th>Zutat</th><th>Menge</th><th>Preis</th></tr></thead>
+        <tbody>
+          <tr><td>Rinderfilet<span class="used-in">G04 (Di+Sa), G05 (Fr)</span></td><td>700g</td><td>~14,00€</td></tr>
+          <tr><td>Hähnchenbrust<span class="used-in">G06 (Mo)</span></td><td>300g</td><td>~2,70€</td></tr>
+          <tr><td>Lachsfilet (frisch/TK)<span class="used-in">G07 (So)</span></td><td>290g</td><td>~3,80€</td></tr>
+          <tr><td>Eier Freiland<span class="used-in">G01 (Mi), G02 (Do)</span></td><td>12 Stk.</td><td>~3,60€</td></tr>
+        </tbody>
+      </table>
+      <div class="shop-total"><span>Protein-Gruppe</span><span class="shop-total-price">~24,10€</span></div>
+    </div>
+    <div class="shop-card">
+      <div class="shop-card-title">🥔 Kohlenhydrate</div>
+      <table class="shop-table">
+        <thead><tr><th>Zutat</th><th>Menge</th><th>Preis</th></tr></thead>
+        <tbody>
+          <tr><td>Kartoffeln (festkochend)<span class="used-in">G01, G04, G05 · 4× Woche</span></td><td>2,1 kg</td><td>~2,80€</td></tr>
+          <tr><td>Basmati-Reis<span class="used-in">G06 (Mo), G02 (Do)</span></td><td>345g roh</td><td>~1,15€</td></tr>
+          <tr><td>Süßkartoffeln<span class="used-in">G07 (So)</span></td><td>450g</td><td>~1,20€</td></tr>
+        </tbody>
+      </table>
+      <div class="shop-total"><span>KH-Gruppe</span><span class="shop-total-price">~5,15€</span></div>
+    </div>
+    <div class="shop-card">
+      <div class="shop-card-title">🥬 Gemüse</div>
+      <table class="shop-table">
+        <thead><tr><th>Zutat</th><th>Menge</th><th>Preis</th></tr></thead>
+        <tbody>
+          <tr><td>Blattspinat (frisch)<span class="used-in">G07, G01, G02, G05</span></td><td>840g</td><td>~5,50€</td></tr>
+          <tr><td>Broccoli<span class="used-in">G06 (Mo), G04 (Di+Sa)</span></td><td>1,1 kg</td><td>~3,40€</td></tr>
+          <tr><td>Hokkaido-Kürbis<span class="used-in">G01 Mi-Abend (nur A)</span></td><td>100g</td><td>~0,60€</td></tr>
+        </tbody>
+      </table>
+      <div class="shop-total"><span>Gemüse-Gruppe</span><span class="shop-total-price">~9,50€</span></div>
+    </div>
+    <div class="shop-card">
+      <div class="shop-card-title">🫙 Basics & Gewürze</div>
+      <table class="shop-table">
+        <thead><tr><th>Zutat</th><th>Menge</th><th>Preis</th></tr></thead>
+        <tbody>
+          <tr><td>Olivenöl (extra vergine)<span class="used-in">Alle 7 Gerichte</span></td><td>250ml</td><td>~3,50€</td></tr>
+          <tr><td>Knoblauch<span class="used-in">G06, G07, G01, G02</span></td><td>1 Knolle</span></td><td>~0,50€</td></tr>
+          <tr><td>Zitrone<span class="used-in">G07 Lachs</span></td><td>1 Stk.</td><td>~0,30€</td></tr>
+          <tr><td>Meersalz, Pfeffer, Muskat<span class="used-in">Basisgewürze</span></td><td>Vorrat</td><td>~1,20€</td></tr>
+          <tr><td>Paprikapulver (edelsüß)<span class="used-in">G06 Hähnchen</span></td><td>Vorrat</td><td>~0,80€</td></tr>
+        </tbody>
+      </table>
+      <div class="shop-total"><span>Basics-Gruppe</span><span class="shop-total-price">~6,30€</span></div>
+    </div>
+  </div>
+  <div class="shop-card" style="margin-top:16px;">
+    <div class="shop-card-title" style="font-size:22px;">💧 Getränke + Snacks</div>
+    <table class="shop-table">
+      <thead><tr><th>Produkt</th><th>Menge/Woche</th><th>Formel</th><th>Preis</th></tr></thead>
+      <tbody>
+        <tr><td>Wasser (still)<span class="used-in">K: 2,1–2,4 L/Tag · A: 1,9–2,2 L/Tag</span></td><td>30 L</td><td>60ml/kg·d (K), 55ml/kg·d (A)</td><td>~3,00€</td></tr>
+        <tr><td>Bananen<span class="used-in">Pre-Training Snack</span></td><td>7 Stk.</td><td>1 Stk. 30–60 Min. vor Training</td><td>~1,40€</td></tr>
+        <tr><td>Griechischer Joghurt (2%)<span class="used-in">Post-Training Snack</span></td><td>500g</td><td>150–200g nach Training</td><td>~1,80€</td></tr>
+        <tr><td>Magerquark<span class="used-in">Abend-Snack Anti-Heißhunger</span></td><td>500g</td><td>100–150g vor Schlaf (Casein)</td><td>~1,60€</td></tr>
+      </tbody>
+    </table>
+    <div class="shop-total" style="margin-top:20px;padding-top:16px;border-top:2px solid var(--amber);">
+      <span style="font-size:16px;">Gesamt Wocheneinkauf (2 Personen)</span>
+      <span class="shop-total-price" style="font-size:30px;">~51,85€</span>
+    </div>
+    <p class="shop-note">* Ohne Grundvorräte (Salz, Pfeffer, Olivenöl — falls noch vorhanden). Mit neuem Olivenöl und allen Gewürzen: ~58€. Einkauf Mo + Do aufteilen für Frische.</p>
+  </div>
+</div>
+
+<!-- ══════════════════ PAGE: SCORING ══════════════════ -->
+<div id="page-scoring" class="page">
+  <div class="sec-hdr">
+    <h2 class="sec-title">7-Tage Scoring-Tabelle</h2>
+    <span class="sec-sub">Konsolidierter Plan · Gemeinsame Abendküche</span>
+  </div>
+  <div class="scoring-table-wrap">
+    <table class="scoring-table">
+      <thead>
+        <tr>
+          <th>Tag</th><th>Abend-Kochen</th><th>Gericht</th><th>K — Aktivität</th>
+          <th>A — Aktivität</th><th style="text-align:center">Anti-Hunger</th>
+          <th style="text-align:center">Wachstum</th><th>Kcal</th><th>Portions-Modus</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Sonntag</strong></td>
+          <td>So-Abend</td>
+          <td>🐟 G07 Lachs+Süßkartoffel</td>
+          <td><span class="sp-tag sp-k">Mo Basketball</span></td>
+          <td><span class="sp-tag sp-a">Mo Ruhe</span></td>
+          <td style="text-align:center"><span class="score-num score-high">8</span></td>
+          <td style="text-align:center"><span class="score-num score-high">9</span></td>
+          <td>K:560 / A:490</td>
+          <td><span class="sp-tag sp-shared">Angepasst</span></td>
+        </tr>
+        <tr>
+          <td><strong>Montag</strong></td>
+          <td>Mo-Abend</td>
+          <td>🍗 G06 Hähnchen+Reis+Broccoli</td>
+          <td><span class="sp-tag sp-k">Di Ruhe</span></td>
+          <td><span class="sp-tag sp-a">Di Kraft+Fußball</span></td>
+          <td style="text-align:center"><span class="score-num score-high">7</span></td>
+          <td style="text-align:center"><span class="score-num score-high">9</span></td>
+          <td>K:470 / A:550</td>
+          <td><span class="sp-tag sp-shared">Angepasst</span></td>
+        </tr>
+        <tr>
+          <td><strong>Dienstag</strong></td>
+          <td>Di-Abend</td>
+          <td>🥦 G04 Kartoffel+Rind+Broccoli</td>
+          <td><span class="sp-tag sp-k">Mi Jogging</span></td>
+          <td><span class="sp-tag sp-a">Mi Fußball</span></td>
+          <td style="text-align:center"><span class="score-num score-high">9</span></td>
+          <td style="text-align:center"><span class="score-num score-high">9</span></td>
+          <td>K:570 / A:540</td>
+          <td><span class="sp-tag sp-shared">Angepasst</span></td>
+        </tr>
+        <tr>
+          <td><strong>Mittwoch</strong></td>
+          <td>Mi-Abend</td>
+          <td>🥚 G01 Kartoffel+Ei+Spinat</td>
+          <td><span class="sp-tag sp-k">Do Ruhe</span></td>
+          <td><span class="sp-tag sp-a">Do Ausdauer+Kraft</span></td>
+          <td style="text-align:center"><span class="score-num score-high">10</span></td>
+          <td style="text-align:center"><span class="score-num score-high">10</span></td>
+          <td>K:480 / A:530</td>
+          <td><span class="sp-tag sp-shared">Angepasst +Kürbis A</span></td>
+        </tr>
+        <tr>
+          <td><strong>Donnerstag</strong></td>
+          <td>Do-Abend</td>
+          <td>🍚 G02 Reis+Ei+Spinat</td>
+          <td><span class="sp-tag sp-k">Fr Basketball</span></td>
+          <td><span class="sp-tag sp-a">Fr Ruhe</span></td>
+          <td style="text-align:center"><span class="score-num score-mid">6</span></td>
+          <td style="text-align:center"><span class="score-num score-high">8</span></td>
+          <td>K:540 / A:450</td>
+          <td><span class="sp-tag sp-shared">Angepasst</span></td>
+        </tr>
+        <tr>
+          <td><strong>Freitag</strong></td>
+          <td>Fr-Abend</td>
+          <td>🥩 G05 Kartoffel+Rind+Spinat</td>
+          <td><span class="sp-tag sp-k" style="background:var(--coraldim);color:var(--coral)">Sa Spieltag</span></td>
+          <td><span class="sp-tag sp-a" style="background:var(--coraldim);color:var(--coral)">Sa Spieltag</span></td>
+          <td style="text-align:center"><span class="score-num score-high">8</span></td>
+          <td style="text-align:center"><span class="score-num score-high">9</span></td>
+          <td>K=A: 540</td>
+          <td style="color:var(--K);font-weight:700">✅ Identisch</td>
+        </tr>
+        <tr>
+          <td><strong>Samstag</strong></td>
+          <td>Sa-Abend</td>
+          <td>🥦 G04 Kartoffel+Rind+Broccoli</td>
+          <td><span class="sp-tag sp-k">So Ruhe</span></td>
+          <td><span class="sp-tag sp-a">So Ruhe</span></td>
+          <td style="text-align:center"><span class="score-num score-high">9</span></td>
+          <td style="text-align:center"><span class="score-num score-high">9</span></td>
+          <td>K=A: 560</td>
+          <td style="color:var(--K);font-weight:700">✅ Identisch</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div style="margin-top:24px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;">
+    <div class="shop-card">
+      <div class="shop-card-title" style="font-size:16px;margin-bottom:12px;">📊 Wochendruchschnitt K</div>
+      <div class="nutrient-row">
+        <div class="nutrient-box"><div class="nutrient-val">523</div><div class="nutrient-key">Kcal/Tag</div></div>
+        <div class="nutrient-box"><div class="nutrient-val">38g</div><div class="nutrient-key">Protein</div></div>
+        <div class="nutrient-box"><div class="nutrient-val">8.4</div><div class="nutrient-key">Anti-Hunger</div></div>
+        <div class="nutrient-box"><div class="nutrient-val">9.0</div><div class="nutrient-key">Wachstum</div></div>
+      </div>
+      <p style="font-size:12px;color:var(--text3);">Inkl. Frühstück + Snacks: ~2200–2400 kcal/Tag</p>
+    </div>
+    <div class="shop-card">
+      <div class="shop-card-title" style="font-size:16px;margin-bottom:12px;">📊 Wochendurchschnitt A</div>
+      <div class="nutrient-row">
+        <div class="nutrient-box"><div class="nutrient-val">509</div><div class="nutrient-key">Kcal/Tag</div></div>
+        <div class="nutrient-box"><div class="nutrient-val">36g</div><div class="nutrient-key">Protein</div></div>
+        <div class="nutrient-box"><div class="nutrient-val">8.1</div><div class="nutrient-key">Anti-Hunger</div></div>
+        <div class="nutrient-box"><div class="nutrient-val">9.1</div><div class="nutrient-key">Wachstum</div></div>
+      </div>
+      <p style="font-size:12px;color:var(--text3);">Inkl. Frühstück + Snacks: ~2000–2200 kcal/Tag</p>
+    </div>
+    <div class="shop-card">
+      <div class="shop-card-title" style="font-size:16px;margin-bottom:12px;">🔀 Identische Tage</div>
+      <div class="nutrient-row" style="grid-template-columns:1fr 1fr;">
+        <div class="nutrient-box"><div class="nutrient-val">2</div><div class="nutrient-key">Ident. Tage</div></div>
+        <div class="nutrient-box"><div class="nutrient-val">5</div><div class="nutrient-key">Angepasst</div></div>
+      </div>
+      <p style="font-size:12px;color:var(--text2);margin-top:10px;">Fr-Abend + Sa-Abend: völlig identisch. Mo–Do-Abend: gleiches Gericht, individuelle Portionen.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  const idx = ['plan','kalender','einkauf','scoring'].indexOf(id);
+  document.querySelectorAll('.nav-tab')[idx].classList.add('active');
+}
+
+function toggleDay(id) {
+  const card = document.getElementById(id);
+  card.classList.toggle('open');
+}
+
+function toggleEinkauf(el) {
+  el.classList.toggle('open');
+  const list = el.nextElementSibling;
+  list.classList.toggle('open');
+}
+
+function exportIcal(who) {
+  const now = new Date();
+  // Set to next Monday
+  const nextMon = new Date(now);
+  const day = now.getDay();
+  const daysUntilMon = day === 0 ? 1 : (8 - day) % 7 || 7;
+  nextMon.setDate(now.getDate() + daysUntilMon);
+
+  function dtStamp(d, allDay) {
+    const y = d.getFullYear();
+    const m = String(d.getMonth()+1).padStart(2,'0');
+    const dd = String(d.getDate()).padStart(2,'0');
+    if(allDay) return `${y}${m}${dd}`;
+    return `${y}${m}${dd}T190000`;
+  }
+  function addDays(d, n) { const r = new Date(d); r.setDate(r.getDate()+n); return r; }
+  function uid() { return Math.random().toString(36).substr(2,9) + '@ka-nutrition'; }
+
+  const weekPlan = [
+    // offset from Monday, abbrev title, K-portion note, A-portion note, dish code, K next, A next
+    { offset:0, dish:'Lachs · Süßkartoffel · Spinat', code:'G07',
+      kNote:'K: 160g Lachs · 270g Süßkartoffel (+KH für Basketball)', aNote:'A: 130g Lachs · 180g Süßkartoffel',
+      kNext:'Di Ruhe', aNext:'Di Kraft+Fußball' }, // Monday evening (cook for Tuesday)
+    // we label by the evening they cook:
+  ];
+
+  const evenings = [
+    { dow:0, label:'Gemeinsame Abendküche', dish:'G07 Lachs·Süßkartoffel·Spinat', kNext:'Mo Basketball', aNext:'Mo Ruhe',
+      kPortion:'K: 160g Lachs, 270g Süßkartoffel (+90g KH), 90g Spinat', aPortion:'A: 130g Lachs, 180g Süßkartoffel, 90g Spinat' },
+    { dow:1, label:'Gemeinsame Abendküche', dish:'G06 Hähnchen·Reis·Broccoli', kNext:'Di Ruhe', aNext:'Di Kraft+Fußball',
+      kPortion:'K: 140g Hähnchen, 65g Reis (roh), 200g Broccoli', aPortion:'A: 160g Hähnchen, 110g Reis (+45g KH), 160g Broccoli' },
+    { dow:2, label:'Gemeinsame Abendküche', dish:'G04 Kartoffel·Rind·Broccoli', kNext:'Mi Jogging', aNext:'Mi Fußball',
+      kPortion:'K: 120g Rind, 260g Kartoffel, 220g Broccoli (+I3C)', aPortion:'A: 100g Rind, 230g Kartoffel, 160g Broccoli' },
+    { dow:3, label:'Gemeinsame Abendküche', dish:'G01 Kartoffel·Ei·Spinat', kNext:'Do Ruhe', aNext:'Do Ausdauer+Kraft',
+      kPortion:'K: 260g Kartoffel, 3 Eier, 110g Spinat', aPortion:'A: 230g Kartoffel, 4 Eier (+1), 100g Spinat + 100g Kürbis (Mg)' },
+    { dow:4, label:'Gemeinsame Abendküche', dish:'G02 Reis·Ei·Spinat', kNext:'Fr Basketball', aNext:'Fr Ruhe',
+      kPortion:'K: 100g Reis (+30g KH-Loading), 3 Eier, 100g Spinat', aPortion:'A: 70g Reis, 2 Eier, 90g Spinat' },
+    { dow:5, label:'GEMEINSAM IDENTISCH', dish:'G05 Kartoffel·Rind·Spinat', kNext:'Sa SPIELTAG', aNext:'Sa SPIELTAG',
+      kPortion:'K=A: 120g Rind, 280g Kartoffel, 130g Spinat — IDENTISCH', aPortion:'Fe+Nitrate für beide Spieltage' },
+    { dow:6, label:'GEMEINSAM IDENTISCH', dish:'G04 Kartoffel·Rind·Broccoli', kNext:'So Ruhe', aNext:'So Ruhe',
+      kPortion:'K=A: 120g Rind, 280g Kartoffel, 190g Broccoli — IDENTISCH', aPortion:'Post-Spieltag Immunsystem-Boost' },
+  ];
+
+  let icsLines = [
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    'PRODID:-//K&A Ernährungsplan//Gemeinsame Abendküche//DE',
+    'CALSCALE:GREGORIAN',
+    'METHOD:PUBLISH',
+    'X-WR-CALNAME:K & A Abendküche',
+    'X-WR-TIMEZONE:Europe/Berlin',
+  ];
+
+  // Generate 4 weeks
+  for(let week=0; week<4; week++) {
+    evenings.forEach((ev) => {
+      // Sunday is offset=-1 from Monday of the week (cook Sunday evening for Monday)
+      let baseDate;
+      if(ev.dow === 0) {
+        // Sunday evening → for Monday: cook on Sunday (dow=0 = Sunday before this Monday)
+        baseDate = addDays(nextMon, -1 + (week*7));
+      } else {
+        baseDate = addDays(nextMon, (ev.dow-1) + (week*7));
+      }
+
+      const showK = (who === 'K' || who === 'BEIDE');
+      const showA = (who === 'A' || who === 'BEIDE');
+
+      if(showK || showA) {
+        const dtStart = dtStamp(baseDate, false);
+        const dtEnd = dtStamp(baseDate, false).replace('T190000', 'T200000');
+        const dtDate = dtStamp(baseDate, true);
+
+        let desc = `🍳 ${ev.label}\\n`;
+        desc += `Gericht: ${ev.dish}\\n\\n`;
+        if(showK) desc += `K (morgen: ${ev.kNext}):\\n${ev.kPortion}\\n\\n`;
+        if(showA) desc += `A (morgen: ${ev.aNext}):\\n${ev.aPortion}`;
+
+        icsLines = icsLines.concat([
+          'BEGIN:VEVENT',
+          `UID:${uid()}`,
+          `DTSTAMP:${new Date().toISOString().replace(/[-:]/g,'').split('.')[0]}Z`,
+          `DTSTART:${dtStart}`,
+          `DTEND:${dtEnd}`,
+          `SUMMARY:🍳 ${ev.dish} (${ev.label})`,
+          `DESCRIPTION:${desc}`,
+          `CATEGORIES:Ernährung,Kochen`,
+          'END:VEVENT',
+        ]);
+      }
+    });
+  }
+
+  icsLines.push('END:VCALENDAR');
+  const icsContent = icsLines.join('\r\n');
+  const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `ernaehrung_abendkueche_${who.toLowerCase()}.ics`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+// Open all day cards by default on mobile or open first one
+document.addEventListener('DOMContentLoaded', () => {
+  // Animate score bars
+  setTimeout(() => {
+    document.querySelectorAll('.score-bar-fill').forEach(bar => {
+      const width = bar.style.width;
+      bar.style.width = '0%';
+      setTimeout(() => { bar.style.width = width; }, 100);
+    });
+  }, 200);
+});
+</script>
+</body>
+</html>
+
+
+      <!-- ══ ENDE DES DEMO-INHALTS ══ -->
+
+    </div>
+
+  </main>
+
+  <footer class="site-footer">
+    Ernährungsplan · Privat &amp; Passwortgeschützt · Erstellt mit Claude Cowork
+  </footer>
+
+</div>
+
+<script>
+  // ══════════════════════════════════════════
+  // 🔧 PASSWORT HIER ÄNDERN
+  // ══════════════════════════════════════════
+  const CORRECT_PASSWORD = 'AKnutri';
+  // ══════════════════════════════════════════
+
+  const SESSION_KEY = 'ep_auth_v1';
+
+  function checkPassword() {
+    const input = document.getElementById('pw-input');
+    const errorEl = document.getElementById('pw-error');
+    const entered = input.value;
+
+    if (entered === CORRECT_PASSWORD) {
+      sessionStorage.setItem(SESSION_KEY, 'true');
+      unlock();
+    } else {
+      errorEl.textContent = 'Falsches Passwort. Bitte erneut versuchen.';
+      input.classList.add('error');
+      input.value = '';
+      setTimeout(() => {
+        input.classList.remove('error');
+        errorEl.textContent = '';
+        input.focus();
+      }, 1800);
+    }
+  }
+
+  function unlock() {
+    document.getElementById('login-screen').style.display = 'none';
+    const main = document.getElementById('main-content');
+    main.style.display = 'block';
+    main.style.animation = 'fadeIn 0.4s ease';
+  }
+
+  function logout() {
+    sessionStorage.removeItem(SESSION_KEY);
+    location.reload();
+  }
+
+  // Auto-unlock if already authenticated this session
+  if (sessionStorage.getItem(SESSION_KEY) === 'true') {
+    unlock();
+  }
+
+  // Allow Enter key on password field
+  document.getElementById('pw-input').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') checkPassword();
+  });
+</script>
+
+</body>
+</html>
