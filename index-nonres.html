@@ -254,145 +254,19 @@ body{font-family:'Barlow',sans-serif;background:var(--bg);color:var(--text);min-
 .btn.a{background:var(--Adim);border-color:rgba(96,165,250,.3);color:var(--A);}
 .btn.a:hover{background:rgba(96,165,250,.2);}
 
-/* ── MOBILE BOTTOM NAV ── */
-.mobile-nav{
-  display:none;
-  position:fixed;bottom:0;left:0;right:0;z-index:300;
-  background:var(--bg2);border-top:1px solid var(--border2);
-  padding-bottom:env(safe-area-inset-bottom,0px);
-}
-.mobile-nav-inner{display:flex;height:56px;}
-.mnav-btn{
-  flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
-  background:none;border:none;color:var(--text3);font-family:'Barlow',sans-serif;
-  font-size:9px;font-weight:600;cursor:pointer;transition:color .2s;padding:8px 4px;
-  letter-spacing:.4px;text-transform:uppercase;-webkit-tap-highlight-color:transparent;
-  touch-action:manipulation;
-}
-.mnav-icon{font-size:18px;line-height:1.2;}
-.mnav-btn.active{color:var(--text);}
-.mnav-btn:active{opacity:.65;}
-
-/* Global touch improvements */
-button,.nav-tab,.day-header,.einkauf-toggle,.btn{
-  -webkit-tap-highlight-color:transparent;
-  touch-action:manipulation;
-}
-
-/* ── RESPONSIVE: TABLET (≤900px) ── */
+/* RESPONSIVE */
 @media(max-width:900px){
-  .mobile-nav{display:block;}
-  body{padding-bottom:calc(56px + env(safe-area-inset-bottom,0px));}
-
-  .hdr{padding:0 16px;height:56px;}
-  .hdr-logo{font-size:19px;gap:8px;}
-  .hdr-logo .sub{display:none;}
-  .nav-tabs{display:none;}
-
-  .hero{padding:20px 16px 16px;}
-  .hero-title{font-size:34px;}
-  .hero-sub{font-size:14px;}
-  .page{padding:0 16px 32px;}
-
-  .athlete-cards{grid-template-columns:1fr;}
-  .athlete-split{grid-template-columns:1fr;}
-  .shop-grid{grid-template-columns:1fr;}
+  .athlete-cards,.week-grid,.athlete-split,.shop-grid{grid-template-columns:1fr;}
   .week-grid{grid-template-columns:repeat(3,1fr);}
+  .hdr{padding:0 14px;}
+  .nav-tabs{display:none;}
+  .hero{padding:24px 14px 20px;}
+  .page{padding:0 14px 40px;}
   .nutrient-row{grid-template-columns:repeat(2,1fr);}
-
-  .score-lbl{width:100px;}
-
-  /* Day card header: flex column, expand button anchored top-right */
-  .day-header{
-    display:flex;flex-direction:column;align-items:flex-start;
-    gap:8px;padding:14px 16px;position:relative;min-height:72px;
-  }
-  .day-label{padding-right:36px;}
-  .day-name{font-size:19px;}
-  .day-dish-preview{display:flex;align-items:center;gap:10px;width:100%;}
-  .dish-emoji-big{font-size:26px;}
-  .dish-preview-name{font-size:15px;}
-  .shared-badge{font-size:10px;padding:3px 10px;align-self:flex-start;}
-  .day-expand-btn{
-    position:absolute;right:16px;top:16px;
-    font-size:16px;width:32px;height:32px;
-    display:flex;align-items:center;justify-content:center;
-  }
-  .day-card.open .day-expand-btn{transform:rotate(180deg);}
-  .day-body{padding:0 16px 16px;}
-
-  .konzept-banner{padding:14px 16px;gap:14px;}
-  .konzept-icon{font-size:28px;}
-
-  .ical-section{flex-direction:column;align-items:flex-start;padding:16px;gap:14px;}
-  .ical-btns{flex-wrap:wrap;gap:8px;}
-
-  /* Larger tap targets for all buttons */
-  .btn{padding:10px 18px;min-height:44px;}
-  .einkauf-toggle{padding:12px 0;min-height:44px;}
-  .day-expand-btn{min-width:44px;min-height:44px;}
-
-  .week-day-hdr{padding:10px 10px 8px;}
-  .week-body{padding:10px;}
-
-  .sec-title{font-size:24px;}
 }
-
-/* ── RESPONSIVE: PHONE (≤600px) ── */
 @media(max-width:600px){
-  .hdr{height:52px;}
-  .hdr-logo{font-size:17px;}
-
-  .hero-title{font-size:26px;}
-  .hero-sub{font-size:13px;}
-
   .week-grid{grid-template-columns:1fr 1fr;}
-
-  .score-lbl{width:84px;font-size:10px;}
-
-  .ical-btns{width:100%;}
-  .ical-btns .btn{flex:1;text-align:center;min-width:0;}
-
-  .sec-title{font-size:21px;}
-  .prep-steps{font-size:12px;}
-
-  .scoring-table-wrap{-webkit-overflow-scrolling:touch;overflow-x:auto;}
-}
-
-/* ── RESPONSIVE: SMALL PHONE (≤400px, iPhone SE / older iPhones) ── */
-@media(max-width:400px){
-  .hero-title{font-size:22px;}
-  .hero-sub{font-size:12px;}
-  .hero{padding:16px 12px 12px;}
-  .page{padding:0 12px 24px;}
-
-  .hdr{padding:0 12px;}
-  .hdr-logo{font-size:15px;gap:6px;}
-
-  .week-grid{grid-template-columns:1fr;}
-
-  .score-lbl{width:72px;}
-
-  .acard{padding:12px 14px;}
-  .acard-name{font-size:18px;}
-  .avatar{width:40px;height:40px;font-size:20px;}
-
-  .day-name{font-size:17px;}
-  .dish-preview-name{font-size:14px;}
-
-  .nutrient-box{padding:8px 10px;}
-  .nutrient-val{font-size:17px;}
-
-  .sec-title{font-size:18px;}
-  .sec-hdr{flex-direction:column;align-items:flex-start;gap:2px;}
-}
-
-/* ── iOS SAFE AREA INSETS (notch / home bar) ── */
-@supports(padding:env(safe-area-inset-top)){
-  .hdr{
-    padding-left:max(16px,env(safe-area-inset-left));
-    padding-right:max(16px,env(safe-area-inset-right));
-  }
+  .ical-section{flex-direction:column;align-items:flex-start;}
 }
 </style>
 </head>
@@ -1385,15 +1259,9 @@ button,.nav-tab,.day-header,.einkauf-toggle,.btn{
 function showPage(id) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.mnav-btn').forEach(t => t.classList.remove('active'));
   document.getElementById('page-' + id).classList.add('active');
   const idx = ['plan','kalender','einkauf','scoring'].indexOf(id);
-  const desktopTabs = document.querySelectorAll('.nav-tab');
-  if(desktopTabs[idx]) desktopTabs[idx].classList.add('active');
-  const mobileTabBtns = document.querySelectorAll('.mnav-btn');
-  if(mobileTabBtns[idx]) mobileTabBtns[idx].classList.add('active');
-  // Scroll to top when switching pages on mobile
-  window.scrollTo({top:0,behavior:'smooth'});
+  document.querySelectorAll('.nav-tab')[idx].classList.add('active');
 }
 
 function toggleDay(id) {
@@ -1523,23 +1391,5 @@ document.addEventListener('DOMContentLoaded', () => {
   }, 200);
 });
 </script>
-
-<!-- MOBILE BOTTOM NAV -->
-<nav class="mobile-nav" aria-label="Mobile Navigation">
-  <div class="mobile-nav-inner">
-    <button class="mnav-btn active" onclick="showPage('plan')">
-      <span class="mnav-icon">📅</span>Wochenplan
-    </button>
-    <button class="mnav-btn" onclick="showPage('kalender')">
-      <span class="mnav-icon">🗓</span>Kalender
-    </button>
-    <button class="mnav-btn" onclick="showPage('einkauf')">
-      <span class="mnav-icon">🛒</span>Einkauf
-    </button>
-    <button class="mnav-btn" onclick="showPage('scoring')">
-      <span class="mnav-icon">🏆</span>Scoring
-    </button>
-  </div>
-</nav>
 </body>
 </html>
